@@ -796,6 +796,10 @@ $config = get_app_config();
             </div>
         </div>
         <div class="header-actions">
+            <a href="admin.php" class="btn-sheet-link" title="จัดการข้อมูลบริจาค (Admin)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>จัดการ (Admin)</span>
+            </a>
             <?php if (!empty($config['google_sheet_url'])): ?>
                 <a href="<?php echo htmlspecialchars($config['google_sheet_url']); ?>" target="_blank" rel="noopener" class="btn-sheet-link" title="เปิดดู Google Sheet">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
@@ -1023,9 +1027,13 @@ $config = get_app_config();
         <p><?php echo htmlspecialchars($config['hospital_address']); ?> · โทร: <?php echo htmlspecialchars($config['hospital_phone']); ?></p>
         
         <div class="footer-admin-link-wrapper">
+            <a href="admin.php" class="btn-bottom-admin" style="background: #1a5c3a; color: white; border-color: #1a5c3a; font-weight: 600;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                จัดการข้อมูลการบริจาค (Admin)
+            </a>
             <button type="button" class="btn-bottom-admin" onclick="openConfigModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                ตั้งค่า Google Sheet / สถานะระบบ (Admin)
+                ตั้งค่า Google Sheet / สถานะระบบ
             </button>
             <?php if (!empty($config['google_sheet_url'])): ?>
                 <a href="<?php echo htmlspecialchars($config['google_sheet_url']); ?>" target="_blank" rel="noopener" class="btn-bottom-admin">

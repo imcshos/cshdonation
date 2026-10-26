@@ -9,5 +9,6 @@
     "hospital_phone": "053-777-017 ต่อ 133(ในเวลาราชการ) ต่อ 156(นอกเวลาราชการ)",
     "hospital_address": "104 หมู่ 6 ต.เวียง อ.เชียงแสน จ.เชียงราย 57150",
     "qr_image": "images\/donation-qr.jpg",
-    "logo_image": "images\/hospital.png"
+    "logo_image": "images\/hospital.png",
+    "admin_password": "admin"
 }

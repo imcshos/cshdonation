@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการข้อมูลการบริจาคและข้อความกำลังใจ (Admin) - โรงพยาบาลเชียงแสน</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/hospital.png">
+
+    <!-- Google Fonts: Kanit & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --admin-green: #1a5c3a;
+            --admin-green-light: #e8f5ee;
+            --admin-green-dark: #13472c;
+            --admin-border: #e2ece7;
+            --admin-bg: #f3f7f5;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--admin-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .font-kanit {
+            font-family: 'Kanit', sans-serif;
+        }
+
+        /* ==========================================================================
+           ACCESS CONTROL / LOGIN SCREEN
+           ========================================================================== */
+        #loginOverlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0d3b24 0%, #1a5c3a 50%, #257a50 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 99999;
+            backdrop-filter: blur(8px);
+        }
+
+        .login-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 36px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            text-align: center;
+            animation: fadeInScale 0.35s ease;
+            position: relative;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .login-logo-wrap {
+            width: 72px;
+            height: 72px;
+            background: #e8f5ee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            box-shadow: 0 4px 15px rgba(26, 92, 58, 0.15);
+        }
+
+        .login-logo-wrap img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+        }
+
+        .login-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.45rem;
+            color: var(--admin-green);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .login-sub {
+            color: #64748b;
+            font-size: 0.88rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .login-input-group {
+            position: relative;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .login-input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .password-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrap input {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border: 1.8px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .password-input-wrap input:focus {
+            border-color: var(--admin-green);
+            box-shadow: 0 0 0 3px rgba(26, 92, 58, 0.15);
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .login-checkbox-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #475569;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .login-checkbox-wrap input {
+            accent-color: var(--admin-green);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .btn-login-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #1a5c3a 0%, #206d45 100%);
+            color: #ffffff;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(26, 92, 58, 0.28);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login-submit:hover {
+            background: linear-gradient(135deg, #13472c 0%, #1a5c3a 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(26, 92, 58, 0.35);
+        }
+
+        .login-footer-links {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-footer-links a {
+            color: #1a5c3a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .login-security-hint {
+            margin-top: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: #64748b;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* Shake animation for incorrect password */
+        .shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* ==========================================================================
+           MAIN ADMIN DASHBOARD
+           ========================================================================== */
+        .admin-wrapper {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+            width: 100%;
+        }
+
+        .donation-main-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2ece7;
+        }
+
+        /* Header Bar */
+        .donation-header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            border-bottom: 2px solid #f0f4f2;
+            padding-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .header-title-group h2 {
+            font-family: 'Kanit', sans-serif;
+            color: var(--admin-green);
+            margin: 0;
+            font-size: clamp(1.2rem, 3vw, 1.55rem);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title-group small {
+            color: #64748b;
+            font-size: 0.88rem;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .header-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-header {
+            padding: 8px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-view-public {
+            background: #e8f5ee;
+            color: #1a5c3a;
+            border-color: #cde8da;
+        }
+
+        .btn-view-public:hover {
+            background: #d5eedf;
+        }
+
+        .btn-refresh {
+            background: #f1f5f9;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
+        .btn-refresh:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-export {
+            background: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .btn-export:hover {
+            background: #dcfce7;
+        }
+
+        .btn-pwd {
+            background: #fefce8;
+            color: #a16207;
+            border-color: #fef08a;
+        }
+
+        .btn-pwd:hover {
+            background: #fef9c3;
+        }
+
+        .btn-logout {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+        }
+
+        .btn-logout:hover {
+            background: #ffe4e6;
+        }
+
+        /* 3 Stats Cards */
+        .donation-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .donation-stat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eef2f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .donation-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .donation-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #1e293b;
+            font-family: 'Kanit', sans-serif;
+            margin-top: 2px;
+        }
+
+        /* Search and Quick Filters */
+        .filter-controls-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-form-wrap {
+            display: flex;
+            gap: 8px;
+            flex-grow: 1;
+            max-width: 460px;
+        }
+
+        .search-input-box {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .search-input-box input {
+            width: 100%;
+            padding: 10px 36px 10px 14px;
+            border: 1.5px solid #d4e2dc;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            outline: none;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .search-input-box input:focus {
+            border-color: var(--admin-green);
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+
+        .btn-search-action {
+            background: var(--admin-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            font-family: 'Kanit', sans-serif;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .btn-search-action:hover {
+            background: var(--admin-green-dark);
+        }
+
+        .quick-filter-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: #ffffff;
+            border: 1px solid #d4dfd9;
+            color: #475569;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .filter-pill:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .filter-pill.active {
+            background: #1a5c3a;
+            color: white;
+            border-color: #1a5c3a;
+            font-weight: 600;
+        }
+
+        /* Banner info when GAS deployment needs sync */
+        .notice-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.86rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        /* Desktop Table View */
+        .desktop-table-view {
+            overflow-x: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2ece7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        table.admin-donation-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1280px;
+            font-size: 0.86rem;
+        }
+
+        table.admin-donation-table thead tr {
+            background: #f4faf6;
+            border-bottom: 2px solid #d4ece0;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        table.admin-donation-table th {
+            padding: 12px 10px;
+            color: var(--admin-green);
+            font-weight: 600;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.88rem;
+        }
+
+        table.admin-donation-table tbody tr {
+            border-bottom: 1px solid #eef4f1;
+            transition: background 0.15s;
+        }
+
+        table.admin-donation-table tbody tr:hover {
+            background: #fbfdfc;
+        }
+
+        table.admin-donation-table td {
+            padding: 11px 10px;
+            vertical-align: middle;
+        }
+
+        /* Badges & Tags */
+        .badge-status-on {
+            background: #e1f5ec;
+            color: #116843;
+            font-size: 0.78rem;
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid #b7e3cf;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-status-on:hover {
+            background: #cdeee0;
+        }
+
+        .badge-status-off {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.78rem;
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-status-off:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .badge-receipt-yes {
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.76rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid #c7d2fe;
+            display: inline-block;
+        }
+
+        .badge-receipt-no {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.76rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .badge-social-yes {
+            background: #e8f5ee;
+            color: #1a5c3a;
+            font-size: 0.74rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid #b7e3cf;
+            display: inline-block;
+        }
+
+        .badge-social-no {
+            background: #fff1f2;
+            color: #be123c;
+            font-size: 0.74rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid #fecdd3;
+            display: inline-block;
+        }
+
+        .badge-tax-id {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #0f172a;
+            display: inline-block;
+        }
+
+        .thumb-preview-box {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .thumb-admin-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid #d4dfd9;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .thumb-admin-img:hover {
+            transform: scale(1.12);
+            border-color: #1a5c3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-delete-row {
+            background: #fff5f5;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-row:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        /* Mobile Cards View */
+        .mobile-cards-view {
+            display: none;
+        }
+
+        .mobile-donation-card {
+            background: #ffffff;
+            border: 1px solid #e3ede8;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(26, 92, 58, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mobile-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #f1f5f3;
+            padding-bottom: 10px;
+            gap: 8px;
+        }
+
+        .mobile-card-donor {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a5c3a;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .mobile-card-date {
+            font-size: 0.78rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .mobile-card-message {
+            background: #fbfdfc;
+            border: 1px solid #ebf3ef;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.92rem;
+            color: #334155;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .mobile-tax-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            display: grid;
+            gap: 6px;
+        }
+
+        .mobile-card-thumbs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .mobile-card-thumbs .thumb-admin-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+        }
+
+        .mobile-card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f3;
+            padding-top: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Modal Lightbox for Images */
+        .image-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: none;
+            place-items: center;
+            padding: 16px;
+            z-index: 999999;
+            backdrop-filter: blur(5px);
+        }
+
+        .image-modal-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            object-fit: contain;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            border: 2px solid #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: grid;
+            place-items: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .btn-close-modal:hover {
+            background: #e11d48;
+            transform: scale(1.1);
+        }
+
+        .btn-download-orig {
+            background: #1a5c3a;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .btn-download-orig:hover {
+            background: #13472c;
+        }
+
+        /* Loading Skeleton & Empty States */
+        .skeleton-row {
+            height: 48px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 8px;
+            margin: 6px 0;
+        }
+
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .empty-state-box {
+            text-align: center;
+            padding: 50px 20px;
+            color: #94a3b8;
+            background: #fbfdfc;
+            border-radius: 14px;
+            border: 1px dashed #d4e2dc;
+            margin: 10px 0;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 820px) {
+            .desktop-table-view {
+                display: none !important;
+            }
+
+            .mobile-cards-view {
+                display: flex !important;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .donation-main-card {
+                padding: 16px 14px !important;
+                border-radius: 14px !important;
+            }
+
+            .donation-header-box {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
+
+            .header-actions-group {
+                width: 100%;
+            }
+
+            .header-actions-group .btn-header {
+                flex: 1 1 calc(50% - 6px);
+                justify-content: center;
+                text-align: center;
+                font-size: 0.82rem;
+                padding: 8px 10px;
+            }
+
+            .filter-controls-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-form-wrap {
+                max-width: 100%;
+            }
+
+            .quick-filter-pills {
+                overflow-x: auto;
+                padding-bottom: 4px;
+                flex-wrap: nowrap;
+            }
+
+            .quick-filter-pills .filter-pill {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==========================================================================
+     ACCESS CONTROL: LOGIN SCREEN OVERLAY (จำกัดสิทธิการเข้าถึง)
+     ========================================================================== -->
+<div id="loginOverlay">
+    <div class="login-card" id="loginCard">
+        <div class="login-logo-wrap">
+            <img src="images/hospital.png" alt="ตราสัญลักษณ์โรงพยาบาล" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png'">
+        </div>
+        
+        <h1 class="login-title">เข้าสู่ระบบผู้ดูแลระบบ</h1>
+        <p class="login-sub">ระบบจัดการข้อมูลการบริจาคและข้อความกำลังใจ<br><strong>โรงพยาบาลเชียงแสน</strong></p>
+
+        <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+            <div class="login-input-group">
+                <label for="adminPasswordInput">รหัสผ่านสำหรับเจ้าหน้าที่ (Admin Password)</label>
+                <div class="password-input-wrap">
+                    <input type="password" id="adminPasswordInput" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน..." autocomplete="current-password" autofocus required>
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" title="ดูรหัสผ่าน">
+                        <span id="pwdEyeIcon">👁️</span>
+                    </button>
+                </div>
+            </div>
+
+            <label class="login-checkbox-wrap">
+                <input type="checkbox" id="rememberMeCheck" checked>
+                <span>จดจำการเข้าสู่ระบบในเครื่องนี้ (30 วัน)</span>
+            </label>
+
+            <button type="submit" class="btn-login-submit" id="btnLoginSubmit">
+                <span>เข้าสู่ระบบจัดการ</span>
+                <span>➜</span>
+            </button>
+        </form>
+
+        <div class="login-security-hint">
+            🔒 <strong>ระบบความปลอดภัย:</strong> กำหนดสิทธิ์เฉพาะเจ้าหน้าที่ รพ.เชียงแสน เท่านั้น (รหัสผ่านเริ่มต้น: <code>admin</code> สามารถเปลี่ยนได้ในหน้าจัดการ)
+        </div>
+
+        <div class="login-footer-links">
+            <a href="index.html">⬅️ กลับหน้าหลักร่วมทำบุญ</a>
+            <span style="color: #cbd5e1;">•</span>
+            <a href="https://script.google.com" target="_blank" rel="noopener">Google Apps Script</a>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     ADMIN MAIN DASHBOARD
+     ========================================================================== -->
+<div class="admin-wrapper" id="adminDashboardWrapper" style="display: none;">
+    <div class="donation-main-card">
+        
+        <!-- Header -->
+        <div class="donation-header-box">
+            <div class="header-title-group">
+                <h2>💚 จัดการข้อมูลการบริจาคและข้อความกำลังใจ</h2>
+                <small>รายการข้อความและสลิปการบริจาค (e-Donation) ที่ส่งเข้ามาจากประชาชน · โรงพยาบาลเชียงแสน</small>
+            </div>
+            
+            <div class="header-actions-group">
+                <a href="index.html" target="_blank" class="btn-header btn-view-public" title="เปิดหน้าเว็บหลักที่ประชาชนเข้าชม">
+                    🌐 ดูหน้าบริจาค
+                </a>
+                <button type="button" class="btn-header btn-refresh" onclick="loadAdminDonations(true)" title="โหลดข้อมูลล่าสุดใหม่">
+                    🔄 รีเฟรช
+                </button>
+                <button type="button" class="btn-header btn-export" onclick="exportToCSV()" title="ดาวน์โหลดเป็นไฟล์ Excel/CSV">
+                    📥 ส่งออก CSV
+                </button>
+                <button type="button" class="btn-header btn-pwd" onclick="openChangePasswordModal()" title="เปลี่ยนรหัสผ่านเข้าสู่ระบบ">
+                    🔑 รหัสผ่าน
+                </button>
+                <button type="button" class="btn-header btn-logout" onclick="handleLogout()" title="ออกจากระบบผู้ดูแล">
+                    🔒 ออกจากระบบ
+                </button>
+            </div>
+        </div>
+
+        <!-- Notice banner if syncing is needed -->
+        <div id="noticeBannerBox" style="display: none;"></div>
+
+        <!-- 3 Stats Cards -->
+        <div class="donation-stat-grid">
+            <div class="donation-stat-card">
+                <div class="donation-stat-icon" style="background: #e8f5ee; color: #1a5c3a;">✉️</div>
+                <div>
+                    <div class="stat-label">รายการทั้งหมด</div>
+                    <div class="stat-value" id="statTotalCount">0</div>
+                </div>
+            </div>
+
+            <div class="donation-stat-card">
+                <div class="donation-stat-icon" style="background: #eff6ff; color: #2563eb;">📷</div>
+                <div>
+                    <div class="stat-label">มีรูปภาพ / สลิปแนบ</div>
+                    <div class="stat-value" id="statWithImagesCount">0</div>
+                </div>
+            </div>
+
+            <div class="donation-stat-card">
+                <div class="donation-stat-icon" style="background: #eef2ff; color: #4338ca;">📄</div>
+                <div>
+                    <div class="stat-label">ขอรับใบอนุโมทนาบัตร</div>
+                    <div class="stat-value" id="statReceiptCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Quick Filters -->
+        <div class="filter-controls-box">
+            <div class="search-form-wrap">
+                <div class="search-input-box">
+                    <input type="text" id="adminSearchInput" placeholder="🔍 ค้นหาชื่อ หรือ ข้อความ..." oninput="handleSearchInput(this.value)">
+                    <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearchFilter()" title="ล้างคำค้นหา">✕</button>
+                </div>
+                <button type="button" class="btn-search-action" onclick="applyFilters()">
+                    ค้นหา
+                </button>
+            </div>
+
+            <div class="quick-filter-pills">
+                <button type="button" class="filter-pill active" data-filter="all" onclick="setQuickFilter('all', this)">ทั้งหมด (<span id="countPillAll">0</span>)</button>
+                <button type="button" class="filter-pill" data-filter="has_image" onclick="setQuickFilter('has_image', this)">📷 มีรูป/สลิป</button>
+                <button type="button" class="filter-pill" data-filter="receipt" onclick="setQuickFilter('receipt', this)">📄 ขอใบอนุโมทนา</button>
+                <button type="button" class="filter-pill" data-filter="approved" onclick="setQuickFilter('approved', this)">👁️ แสดงบนเว็บ</button>
+                <button type="button" class="filter-pill" data-filter="hidden" onclick="setQuickFilter('hidden', this)">🔒 ซ่อนบนเว็บ</button>
+            </div>
+        </div>
+
+        <!-- 1. Desktop Table View -->
+        <div class="desktop-table-view">
+            <table class="admin-donation-table">
+                <thead>
+                    <tr>
+                        <th style="width: 110px;">วันที่ส่ง</th>
+                        <th style="width: 170px;">ชื่อผู้ร่วมทำบุญ</th>
+                        <th style="width: 95px; text-align: center;">ใบอนุโมทนา</th>
+                        <th style="width: 105px; text-align: center;">เผยแพร่ขอบคุณ</th>
+                        <th style="width: 150px;">ชื่อลดหย่อนภาษี</th>
+                        <th style="width: 130px;">เลขประจำตัวผู้เสียภาษี</th>
+                        <th style="width: 110px;">เบอร์โทร</th>
+                        <th style="min-width: 180px;">ที่อยู่จัดส่งเอกสาร</th>
+                        <th style="min-width: 220px;">ข้อความ</th>
+                        <th style="width: 110px; text-align: center;">สลิป/รูปภาพ</th>
+                        <th style="width: 110px; text-align: center;">แสดงบนเว็บ</th>
+                        <th style="width: 85px; text-align: center;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="desktopTableBody">
+                    <!-- Populated via Javascript -->
+                    <tr>
+                        <td colspan="12" style="text-align: center; padding: 40px;">
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 2. Mobile Cards View -->
+        <div class="mobile-cards-view" id="mobileCardsContainer">
+            <!-- Populated via Javascript -->
+        </div>
+
+    </div>
+</div>
+
+<!-- ==========================================================================
+     IMAGE PREVIEW LIGHTBOX MODAL
+     ========================================================================== -->
+<div class="image-modal-backdrop" id="adminImageModal" onclick="closeAdminImageModal()">
+    <div class="image-modal-content" onclick="event.stopPropagation()">
+        <button type="button" class="btn-close-modal" onclick="closeAdminImageModal()" title="ปิดหน้าต่าง">✕</button>
+        <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ">
+        <div>
+            <a id="adminDownloadLink" href="" target="_blank" download class="btn-download-orig">
+                ⬇️ ดาวน์โหลด / เปิดรูปภาพต้นฉบับ
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     SCRIPTS & CLIENT-SIDE LOGIC
+     ========================================================================== -->
+<script src="config.js"></script>
+<script>
+    // State Variables
+    let allDonations = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+    const AUTH_SESSION_KEY = 'csh_admin_logged_in_v1';
+    const AUTH_TOKEN_KEY = 'csh_admin_remember_token_v1';
+    const CUSTOM_PWD_KEY = 'csh_admin_custom_pwd_v1';
+
+    // 1. Password & Access Control
+    function getAdminPassword() {
+        const custom = localStorage.getItem(CUSTOM_PWD_KEY);
+        if (custom) return custom;
+        if (typeof CONFIG !== 'undefined' && CONFIG.ADMIN_PASSWORD) {
+            return CONFIG.ADMIN_PASSWORD;
+        }
+        return 'admin';
+    }
+
+    function checkAuthOnLoad() {
+        const isSessionAuth = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
+        const isRememberAuth = localStorage.getItem(AUTH_TOKEN_KEY) === btoa(getAdminPassword());
+
+        if (isSessionAuth || isRememberAuth) {
+            unlockDashboard();
+        } else {
+            showLoginScreen();
+        }
+    }
+
+    function showLoginScreen() {
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('adminDashboardWrapper').style.display = 'none';
+        setTimeout(() => {
+            const pwdInput = document.getElementById('adminPasswordInput');
+            if (pwdInput) pwdInput.focus();
+        }, 150);
+    }
+
+    function unlockDashboard() {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminDashboardWrapper').style.display = 'block';
+        loadAdminDonations();
+    }
+
+    function togglePasswordVisibility() {
+        const input = document.getElementById('adminPasswordInput');
+        const icon = document.getElementById('pwdEyeIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            icon.textContent = '👁️';
+        }
+    }
+
+    function handleAdminLogin(event) {
+        event.preventDefault();
+        const input = document.getElementById('adminPasswordInput');
+        const entered = input.value.trim();
+        const correctPassword = getAdminPassword();
+        const rememberMe = document.getElementById('rememberMeCheck').checked;
+        const card = document.getElementById('loginCard');
+
+        if (entered === correctPassword) {
+            sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+            if (rememberMe) {
+                localStorage.setItem(AUTH_TOKEN_KEY, btoa(correctPassword));
+            } else {
+                localStorage.removeItem(AUTH_TOKEN_KEY);
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'เข้าสู่ระบบสำเร็จ',
+                text: 'ยินดีต้อนรับสู่ระบบจัดการข้อมูลการบริจาค',
+                timer: 1200,
+                showConfirmButton: false
+            });
+
+            unlockDashboard();
+        } else {
+            card.classList.remove('shake');
+            void card.offsetWidth; // trigger reflow
+            card.classList.add('shake');
+
+            Swal.fire({
+                icon: 'error',
+                title: 'รหัสผ่านไม่ถูกต้อง',
+                text: 'กรุณาตรวจสอบรหัสผ่านอีกครั้ง (ค่าเริ่มต้นคือ admin)',
+                confirmButtonColor: '#1a5c3a',
+                confirmButtonText: 'ตกลง'
+            });
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    function handleLogout() {
+        Swal.fire({
+            title: 'ต้องการออกจากระบบ?',
+            text: 'คุณต้องกรอกรหัสผ่านเพื่อเข้าใช้งานใหม่อีกครั้ง',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ออกจากระบบ',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sessionStorage.removeItem(AUTH_SESSION_KEY);
+                localStorage.removeItem(AUTH_TOKEN_KEY);
+                showLoginScreen();
+                document.getElementById('adminPasswordInput').value = '';
+            }
+        });
+    }
+
+    async function openChangePasswordModal() {
+        const currentStored = getAdminPassword();
+        const { value: formValues } = await Swal.fire({
+            title: '🔑 เปลี่ยนรหัสผ่านผู้ดูแลระบบ',
+            html: `
+                <div style="text-align: left; font-size: 0.9rem;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display:block; margin-bottom:4px; font-weight:600; color:#334155;">รหัสผ่านเดิม</label>
+                        <input type="password" id="swalOldPwd" class="swal2-input" placeholder="กรอกรหัสผ่านเดิม..." style="width: 100%; margin:0;">
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="display:block; margin-bottom:4px; font-weight:600; color:#334155;">รหัสผ่านใหม่</label>
+                        <input type="password" id="swalNewPwd" class="swal2-input" placeholder="กรอกรหัสผ่านใหม่..." style="width: 100%; margin:0;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:600; color:#334155;">ยืนยันรหัสผ่านใหม่</label>
+                        <input type="password" id="swalConfirmPwd" class="swal2-input" placeholder="กรอกยืนยันอีกครั้ง..." style="width: 100%; margin:0;">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonColor: '#1a5c3a',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'บันทึกรหัสผ่านใหม่',
+            cancelButtonText: 'ยกเลิก',
+            preConfirm: () => {
+                const oldP = document.getElementById('swalOldPwd').value;
+                const newP = document.getElementById('swalNewPwd').value;
+                const confP = document.getElementById('swalConfirmPwd').value;
+
+                if (!oldP || !newP || !confP) {
+                    Swal.showValidationMessage('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                    return false;
+                }
+                if (oldP !== currentStored) {
+                    Swal.showValidationMessage('รหัสผ่านเดิมไม่ถูกต้อง');
+                    return false;
+                }
+                if (newP.length < 4) {
+                    Swal.showValidationMessage('รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
+                    return false;
+                }
+                if (newP !== confP) {
+                    Swal.showValidationMessage('รหัสผ่านใหม่และการยืนยันไม่ตรงกัน');
+                    return false;
+                }
+                return newP;
+            }
+        });
+
+        if (formValues) {
+            localStorage.setItem(CUSTOM_PWD_KEY, formValues);
+            if (localStorage.getItem(AUTH_TOKEN_KEY)) {
+                localStorage.setItem(AUTH_TOKEN_KEY, btoa(formValues));
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว',
+                text: 'รหัสผ่านใหม่จะมีผลทันทีในเบราว์เซอร์นี้',
+                confirmButtonColor: '#1a5c3a'
+            });
+        }
+    }
+
+    // 2. Data Loading & API Calls
+    function getScriptUrl() {
+        return localStorage.getItem('csh_google_script_url') || (typeof CONFIG !== 'undefined' ? CONFIG.GOOGLE_SCRIPT_URL : '');
+    }
+
+    async function loadAdminDonations(showToast = false) {
+        const tableBody = document.getElementById('desktopTableBody');
+        const mobileContainer = document.getElementById('mobileCardsContainer');
+
+        if (tableBody) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="12" style="text-align: center; padding: 40px;">
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">กำลังโหลดข้อมูลจาก Google Sheet...</div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        const scriptUrl = getScriptUrl();
+        let loadedData = null;
+
+        // Try Google Apps Script admin_list
+        if (scriptUrl) {
+            try {
+                const fetchUrl = scriptUrl + (scriptUrl.includes('?') ? '&' : '?') + 'action=admin_list&t=' + Date.now();
+                const res = await fetch(fetchUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.donations) {
+                        loadedData = json;
+                    } else if (json && json.status === 'connected') {
+                        // Older deployment without admin_list -> fall back to action=wishes
+                        const wishRes = await fetch(scriptUrl + (scriptUrl.includes('?') ? '&' : '?') + 'action=wishes&t=' + Date.now());
+                        const wishJson = await wishRes.json();
+                        if (wishJson && wishJson.wishes) {
+                            loadedData = {
+                                success: true,
+                                totalDonations: json.totalDonations || wishJson.wishes.length,
+                                withImagesCount: wishJson.wishes.filter(w => w.image1 || w.image2).length,
+                                receiptCount: 0,
+                                donations: wishJson.wishes.map((w, idx) => ({
+                                    row: idx + 2,
+                                    created_at: formatDate(w.time),
+                                    donor_name: w.name,
+                                    message: w.message,
+                                    receipt_requested: 'ไม่รับ',
+                                    tax_name: '',
+                                    tax_id: '',
+                                    phone: '',
+                                    address: '',
+                                    allow_social_post: 'อนุญาต',
+                                    image1: formatImageUrl(w.image1),
+                                    image2: formatImageUrl(w.image2),
+                                    status: 'แสดง',
+                                    is_approved: true
+                                }))
+                            };
+                            showGasUpdateNotice();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Error fetching from GAS admin_list:', err);
+            }
+        }
+
+        // Fallback: Check local PHP backup if running on Apache/PHP
+        if (!loadedData || !loadedData.donations || loadedData.donations.length === 0) {
+            try {
+                const res = await fetch('data/donations_backup.json');
+                if (res.ok) {
+                    const localItems = await res.json();
+                    if (Array.isArray(localItems) && localItems.length > 0) {
+                        loadedData = {
+                            success: true,
+                            totalDonations: localItems.length,
+                            withImagesCount: localItems.filter(i => i.local_image1 || i.local_image2 || i.image1_name || i.image2_name).length,
+                            receiptCount: localItems.filter(i => i.receipt_requested === 'รับ').length,
+                            donations: localItems.map((item, idx) => ({
+                                row: idx + 2,
+                                created_at: item.created_at,
+                                donor_name: item.donor_name,
+                                message: item.message,
+                                receipt_requested: item.receipt_requested || 'ไม่รับ',
+                                tax_name: item.tax_name || '',
+                                tax_id: item.tax_id || '',
+                                phone: item.phone || '',
+                                address: item.address || '',
+                                allow_social_post: item.allow_social_post || 'อนุญาต',
+                                image1: item.local_image1 || '',
+                                image2: item.local_image2 || '',
+                                status: item.status || 'แสดง',
+                                is_approved: (item.status !== 'ซ่อน')
+                            }))
+                        };
+                    }
+                }
+            } catch (e) {}
+        }
+
+        if (loadedData && Array.isArray(loadedData.donations)) {
+            allDonations = loadedData.donations;
+            updateStatsUI(loadedData);
+            renderDonationsUI();
+
+            if (showToast) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: `อัปเดตข้อมูลแล้ว (${allDonations.length} รายการ)`,
+                    showConfirmButton: false,
+                    timer: 1800
+                });
+            }
+        } else {
+            allDonations = [];
+            updateStatsUI({ totalDonations: 0, withImagesCount: 0, receiptCount: 0 });
+            renderDonationsUI();
+        }
+    }
+
+    function showGasUpdateNotice() {
+        const box = document.getElementById('noticeBannerBox');
+        if (box) {
+            box.innerHTML = `
+                <div class="notice-banner">
+                    <div>
+                        <strong>💡 แนะนำสำหรับผู้ดูแล:</strong> กำลังแสดงข้อมูลเฉพาะรายการที่เปิดเผยบนเว็บ หากต้องการให้หน้า Admin แสดงครบทุกคอลัมน์ (ชื่อลดหย่อนภาษี, เลขประจำตัวผู้เสียภาษี, ปุ่มซ่อน/แสดง, ปุ่มลบ) กรุณานำโค้ดในไฟล์ <code>google-apps-script/Code.gs</code> ไปวางและ Deploy ใหม่ใน Google Apps Script ค่ะ
+                    </div>
+                    <button type="button" onclick="this.parentElement.style.display='none'" style="background:none;border:none;cursor:pointer;color:#166534;font-size:16px;">✕</button>
+                </div>
+            `;
+            box.style.display = 'block';
+        }
+    }
+
+    function updateStatsUI(stats) {
+        const total = stats.totalDonations !== undefined ? stats.totalDonations : allDonations.length;
+        const withImg = stats.withImagesCount !== undefined ? stats.withImagesCount : allDonations.filter(d => d.image1 || d.image2).length;
+        const receipt = stats.receiptCount !== undefined ? stats.receiptCount : allDonations.filter(d => d.receipt_requested === 'รับ').length;
+
+        document.getElementById('statTotalCount').textContent = Number(total).toLocaleString();
+        document.getElementById('statWithImagesCount').textContent = Number(withImg).toLocaleString();
+        document.getElementById('statReceiptCount').textContent = Number(receipt).toLocaleString();
+        document.getElementById('countPillAll').textContent = Number(allDonations.length).toLocaleString();
+    }
+
+    // 3. Render Table & Mobile Cards
+    function renderDonationsUI() {
+        const tableBody = document.getElementById('desktopTableBody');
+        const mobileContainer = document.getElementById('mobileCardsContainer');
+
+        let filtered = allDonations.slice();
+
+        // Apply Quick Filter
+        if (currentFilter === 'has_image') {
+            filtered = filtered.filter(d => Boolean(d.image1 || d.image2));
+        } else if (currentFilter === 'receipt') {
+            filtered = filtered.filter(d => d.receipt_requested === 'รับ');
+        } else if (currentFilter === 'approved') {
+            filtered = filtered.filter(d => d.is_approved);
+        } else if (currentFilter === 'hidden') {
+            filtered = filtered.filter(d => !d.is_approved);
+        }
+
+        // Apply Search Query
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            filtered = filtered.filter(d => {
+                const name = (d.donor_name || '').toLowerCase();
+                const msg = (d.message || '').toLowerCase();
+                const taxName = (d.tax_name || '').toLowerCase();
+                const taxId = (d.tax_id || '').toLowerCase();
+                const phone = (d.phone || '').toLowerCase();
+                return name.includes(q) || msg.includes(q) || taxName.includes(q) || taxId.includes(q) || phone.includes(q);
+            });
+        }
+
+        if (filtered.length === 0) {
+            const emptyHtml = `
+                <div class="empty-state-box">
+                    🌿 ยังไม่มีข้อมูลการบริจาค หรือ ไม่พบข้อมูลตามคำค้นหาที่ระบุ
+                </div>
+            `;
+            tableBody.innerHTML = `<tr><td colspan="12">${emptyHtml}</td></tr>`;
+            mobileContainer.innerHTML = emptyHtml;
+            return;
+        }
+
+        // 1. Desktop Rows
+        tableBody.innerHTML = filtered.map(item => {
+            const img1 = formatImageUrl(item.image1);
+            const img2 = formatImageUrl(item.image2);
+
+            let thumbsHtml = '';
+            if (img1) {
+                thumbsHtml += `<img src="${img1}" class="thumb-admin-img" title="รูปที่ 1 (คลิกดูภาพใหญ่)" onerror="this.style.display='none'" onclick="openAdminImageModal('${img1}')">`;
+            }
+            if (img2) {
+                thumbsHtml += `<img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน (คลิกดูภาพใหญ่)" onerror="this.style.display='none'" onclick="openAdminImageModal('${img2}')">`;
+            }
+            if (!thumbsHtml) {
+                thumbsHtml = '<span style="color: #cbd5e1; font-size: 0.8rem;">—</span>';
+            } else {
+                thumbsHtml = `<div class="thumb-preview-box">${thumbsHtml}</div>`;
+            }
+
+            const receiptBadge = (item.receipt_requested === 'รับ')
+                ? `<span class="badge-receipt-yes">รับ</span>`
+                : `<span class="badge-receipt-no">ไม่รับ</span>`;
+
+            const socialBadge = (item.allow_social_post === 'อนุญาต')
+                ? `<span class="badge-social-yes">อนุญาต</span>`
+                : `<span class="badge-social-no">ไม่อนุญาต</span>`;
+
+            const statusBtn = item.is_approved
+                ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})" title="คลิกเพื่อสลับเป็น ซ่อน">👁️ แสดง</button>`
+                : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})" title="คลิกเพื่อสลับเป็น แสดง">🔒 ซ่อน</button>`;
+
+            return `
+                <tr data-row="${item.row}">
+                    <!-- วันที่ส่ง -->
+                    <td style="color: #475569; font-size: 0.83rem; white-space: nowrap;">
+                        ${formatDateTableCell(item.created_at)}
+                    </td>
+
+                    <!-- ชื่อผู้ร่วมทำบุญ -->
+                    <td style="font-weight: 600; color: #1a5c3a; font-family: 'Kanit', sans-serif;">
+                        ${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}
+                    </td>
+
+                    <!-- ใบอนุโมทนา -->
+                    <td style="text-align: center; white-space: nowrap;">
+                        ${receiptBadge}
+                    </td>
+
+                    <!-- เผยแพร่ขอบคุณ -->
+                    <td style="text-align: center; white-space: nowrap;">
+                        ${socialBadge}
+                    </td>
+
+                    <!-- ชื่อลดหย่อนภาษี -->
+                    <td style="color: #1e293b; font-weight: 500; user-select: all;" title="ดับเบิ้ลคลิกเพื่อคัดลอก">
+                        ${item.tax_name ? escapeHtml(item.tax_name) : '<span style="color: #cbd5e1;">—</span>'}
+                    </td>
+
+                    <!-- เลขประจำตัวผู้เสียภาษี -->
+                    <td style="white-space: nowrap; user-select: all;" title="ดับเบิ้ลคลิกเพื่อคัดลอก">
+                        ${item.tax_id ? `<span class="badge-tax-id">${escapeHtml(item.tax_id)}</span>` : '<span style="color: #cbd5e1;">—</span>'}
+                    </td>
+
+                    <!-- เบอร์โทร -->
+                    <td style="white-space: nowrap; user-select: all;" title="ดับเบิ้ลคลิกเพื่อคัดลอก">
+                        ${item.phone ? `<a href="tel:${item.phone}" style="color: #0369a1; text-decoration: none; font-weight:500;">${escapeHtml(item.phone)}</a>` : '<span style="color: #cbd5e1;">—</span>'}
+                    </td>
+
+                    <!-- ที่อยู่จัดส่งเอกสาร -->
+                    <td style="color: #334155; line-height: 1.4; user-select: all;" title="ดับเบิ้ลคลิกเพื่อคัดลอก">
+                        ${item.address ? escapeHtml(item.address) : '<span style="color: #cbd5e1;">—</span>'}
+                    </td>
+
+                    <!-- ข้อความ -->
+                    <td style="color: #475569; line-height: 1.5; word-break: break-word; max-width: 280px; white-space: pre-wrap;">
+                        ${item.message ? escapeHtml(item.message) : '<span style="color: #cbd5e1;">—</span>'}
+                    </td>
+
+                    <!-- สลิป/รูปภาพ -->
+                    <td style="text-align: center;">
+                        ${thumbsHtml}
+                    </td>
+
+                    <!-- แสดงบนเว็บ -->
+                    <td style="text-align: center;">
+                        ${statusBtn}
+                    </td>
+
+                    <!-- จัดการ (ลบ) -->
+                    <td style="text-align: center;">
+                        <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row}, '${escapeHtml(item.donor_name || 'ผู้บริจาค')}')" title="ลบข้อมูลรายการนี้">
+                            🗑️ ลบ
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // 2. Mobile Cards
+        mobileContainer.innerHTML = filtered.map(item => {
+            const img1 = formatImageUrl(item.image1);
+            const img2 = formatImageUrl(item.image2);
+
+            let thumbsHtml = '';
+            if (img1) {
+                thumbsHtml += `<img src="${img1}" class="thumb-admin-img" title="รูปที่ 1" onerror="this.style.display='none'" onclick="openAdminImageModal('${img1}')">`;
+            }
+            if (img2) {
+                thumbsHtml += `<img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน" onerror="this.style.display='none'" onclick="openAdminImageModal('${img2}')">`;
+            }
+
+            const isReceipt = (item.receipt_requested === 'รับ');
+            const receiptHtml = isReceipt ? `
+                <div class="mobile-tax-box">
+                    <div>
+                        <span style="color: #64748b; font-size: 0.76rem; display: block;">ชื่อลดหย่อนภาษี:</span>
+                        <strong style="color: #1e293b;">${escapeHtml(item.tax_name || '—')}</strong>
+                    </div>
+                    <div>
+                        <span style="color: #64748b; font-size: 0.76rem; display: block;">เลขผู้เสียภาษี/ปชช:</span>
+                        <span class="badge-tax-id">${escapeHtml(item.tax_id || '—')}</span>
+                    </div>
+                    <div>
+                        <span style="color: #64748b; font-size: 0.76rem; display: block;">เบอร์โทร:</span>
+                        <span style="color: #0369a1; font-weight: 500;">${escapeHtml(item.phone || '—')}</span>
+                    </div>
+                    <div>
+                        <span style="color: #64748b; font-size: 0.76rem; display: block;">ที่อยู่จัดส่ง:</span>
+                        <span style="color: #334155;">${escapeHtml(item.address || '—')}</span>
+                    </div>
+                </div>
+            ` : `
+                <div style="font-size: 0.78rem; color: #64748b;">
+                    <span class="badge-receipt-no">ไม่รับใบอนุโมทนาบัตร</span>
+                </div>
+            `;
+
+            const statusBtn = item.is_approved
+                ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})">👁️ แสดงบนเว็บ</button>`
+                : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})">🔒 ซ่อนบนเว็บ</button>`;
+
+            return `
+                <div class="mobile-donation-card" data-row="${item.row}">
+                    <div class="mobile-card-top">
+                        <div>
+                            <div class="mobile-card-donor">${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}</div>
+                            <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                ${item.allow_social_post === 'อนุญาต' ? '<span class="badge-social-yes">อนุญาตเผยแพร่</span>' : '<span class="badge-social-no">ไม่อนุญาตเผยแพร่</span>'}
+                                ${isReceipt ? '<span class="badge-receipt-yes">ขอใบอนุโมทนา</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="mobile-card-date">${formatDateTableCell(item.created_at)}</div>
+                    </div>
+
+                    ${receiptHtml}
+
+                    ${item.message ? `
+                        <div class="mobile-card-message">
+                            ${escapeHtml(item.message)}
+                        </div>
+                    ` : `
+                        <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">— ไม่ได้ระบุข้อความ —</div>
+                    `}
+
+                    ${thumbsHtml ? `
+                        <div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px; font-weight: 500;">📷 รูปภาพและสลิปแนบ:</div>
+                            <div class="mobile-card-thumbs">${thumbsHtml}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="mobile-card-actions">
+                        ${statusBtn}
+                        <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row}, '${escapeHtml(item.donor_name || 'ผู้บริจาค')}')">
+                            🗑️ ลบข้อมูล
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 4. Toggle Visibility (แสดง / ซ่อน)
+    async function toggleVisibility(rowIdx) {
+        const item = allDonations.find(d => d.row === rowIdx);
+        if (!item) return;
+
+        const nextStatus = item.is_approved ? 'ซ่อน' : 'แสดง';
+        const actionLabel = item.is_approved ? 'ซ่อนจากหน้าเว็บ' : 'แสดงบนหน้าเว็บ';
+
+        // Optimistic UI update
+        item.is_approved = !item.is_approved;
+        item.status = nextStatus;
+        renderDonationsUI();
+
+        const scriptUrl = getScriptUrl();
+        if (scriptUrl) {
+            try {
+                const targetUrl = scriptUrl + (scriptUrl.includes('?') ? '&' : '?') + 'action=toggle_status&row=' + rowIdx + '&t=' + Date.now();
+                const res = await fetch(targetUrl);
+                const data = await res.json();
+                if (data && data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: `อัปเดตเป็น "${nextStatus}" เรียบร้อยแล้ว`,
+                        showConfirmButton: false,
+                        timer: 1600
+                    });
+                    return;
+                }
+            } catch (err) {
+                console.warn('GAS toggle failed:', err);
+            }
+        }
+
+        // If GAS write is not yet enabled or local, show polite notification
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'info',
+            title: `เปลี่ยนสถานะเป็น ${nextStatus} (จำลอง)`,
+            showConfirmButton: false,
+            timer: 1600
+        });
+    }
+
+    // 5. Delete Donation
+    async function deleteDonation(rowIdx, donorName) {
+        const result = await Swal.fire({
+            title: 'ยืนยันการลบข้อมูล?',
+            html: `ต้องการลบข้อมูลของ <strong>"${escapeHtml(donorName)}"</strong> ใช่หรือไม่?<br><small style="color: #dc2626;">การลบนี้จะไม่สามารถย้อนกลับได้</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ต้องการลบ',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (!result.isConfirmed) return;
+
+        // Optimistic UI removal
+        allDonations = allDonations.filter(d => d.row !== rowIdx);
+        renderDonationsUI();
+        updateStatsUI({ totalDonations: allDonations.length });
+
+        const scriptUrl = getScriptUrl();
+        if (scriptUrl) {
+            try {
+                const targetUrl = scriptUrl + (scriptUrl.includes('?') ? '&' : '?') + 'action=delete_row&row=' + rowIdx + '&t=' + Date.now();
+                const res = await fetch(targetUrl);
+                const data = await res.json();
+                if (data && data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'ลบข้อมูลสำเร็จแล้ว',
+                        showConfirmButton: false,
+                        timer: 1800
+                    });
+                    return;
+                }
+            } catch (err) {
+                console.warn('GAS delete error:', err);
+            }
+        }
+
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'ลบข้อมูลออกจากมุมมองเรียบร้อยแล้ว',
+            showConfirmButton: false,
+            timer: 1800
+        });
+    }
+
+    // 6. Export to CSV
+    function exportToCSV() {
+        if (!allDonations || allDonations.length === 0) {
+            Swal.fire({ icon: 'info', title: 'ไม่มีข้อมูล', text: 'ยังไม่มีข้อมูลการบริจาคสำหรับส่งออก' });
+            return;
+        }
+
+        const headers = [
+            "วันที่ส่ง",
+            "ชื่อผู้ร่วมบริจาค",
+            "ข้อความกำลังใจ",
+            "ขอรับใบอนุโมทนาบัตร",
+            "ชื่อลดหย่อนภาษี",
+            "เลขประจำตัวผู้เสียภาษี",
+            "เบอร์โทรศัพท์",
+            "ที่อยู่จัดส่งเอกสาร",
+            "อนุญาตเผยแพร่",
+            "รูปภาพ 1",
+            "รูปภาพ 2",
+            "สถานะบนเว็บ"
+        ];
+
+        const rows = allDonations.map(d => [
+            `"${(d.created_at || '').replace(/"/g, '""')}"`,
+            `"${(d.donor_name || '').replace(/"/g, '""')}"`,
+            `"${(d.message || '').replace(/"/g, '""')}"`,
+            `"${(d.receipt_requested || '').replace(/"/g, '""')}"`,
+            `"${(d.tax_name || '').replace(/"/g, '""')}"`,
+            `"${(d.tax_id || '').replace(/"/g, '""')}"`,
+            `"${(d.phone || '').replace(/"/g, '""')}"`,
+            `"${(d.address || '').replace(/"/g, '""')}"`,
+            `"${(d.allow_social_post || '').replace(/"/g, '""')}"`,
+            `"${(d.image1 || '').replace(/"/g, '""')}"`,
+            `"${(d.image2 || '').replace(/"/g, '""')}"`,
+            `"${d.is_approved ? 'แสดง' : 'ซ่อน'}"`
+        ]);
+
+        const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const dateStr = new Date().toISOString().slice(0, 10);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `CSH_Donations_${dateStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // 7. Search & Filters
+    function handleSearchInput(val) {
+        searchQuery = val.trim();
+        const clearBtn = document.getElementById('searchClearBtn');
+        if (clearBtn) {
+            clearBtn.style.display = searchQuery ? 'block' : 'none';
+        }
+        renderDonationsUI();
+    }
+
+    function clearSearchFilter() {
+        const input = document.getElementById('adminSearchInput');
+        if (input) input.value = '';
+        searchQuery = '';
+        document.getElementById('searchClearBtn').style.display = 'none';
+        renderDonationsUI();
+    }
+
+    function applyFilters() {
+        renderDonationsUI();
+    }
+
+    function setQuickFilter(type, element) {
+        currentFilter = type;
+        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        if (element) element.classList.add('active');
+        renderDonationsUI();
+    }
+
+    // 8. Image Modal Lightbox
+    function openAdminImageModal(src) {
+        if (!src) return;
+        const modal = document.getElementById('adminImageModal');
+        const img = document.getElementById('adminModalPreviewImg');
+        const link = document.getElementById('adminDownloadLink');
+        img.src = src;
+        link.href = src;
+        modal.style.display = 'grid';
+    }
+
+    function closeAdminImageModal() {
+        document.getElementById('adminImageModal').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeAdminImageModal();
+    });
+
+    // 9. Utility Helpers
+    function formatImageUrl(url) {
+        if (!url) return '';
+        const str = String(url).trim();
+        if (!str) return '';
+
+        const driveMatch = str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || str.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (driveMatch && driveMatch[1]) {
+            return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+        }
+        if (str.startsWith('http://') || str.startsWith('https://') || str.startsWith('data:image/') || str.startsWith('uploads/')) {
+            return str;
+        }
+        return '';
+    }
+
+    function formatDateTableCell(dateVal) {
+        if (!dateVal) return '—';
+        const str = String(dateVal);
+        if (str.includes('/')) {
+            const parts = str.split(' ');
+            if (parts.length >= 2) {
+                return `<strong>${parts[0]}</strong><br><span style="color:#64748b; font-size:0.75rem;">${parts.slice(1).join(' ')}</span>`;
+            }
+            return `<strong>${str}</strong>`;
+        }
+        try {
+            const d = new Date(dateVal);
+            if (!isNaN(d.getTime())) {
+                const day = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const time = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+                return `<strong>${day}</strong><br><span style="color:#64748b; font-size:0.75rem;">${time}</span>`;
+            }
+        } catch(e) {}
+        return str;
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+        } catch(e) {
+            return dateStr;
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', checkAuthOnLoad);
+</script>
+
+</body>
+</html>
