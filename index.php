@@ -1315,7 +1315,13 @@ $config = get_app_config();
                 body: formData
             });
 
-            const result = await response.json();
+            const text = await response.text();
+            let result = {};
+            try {
+                result = JSON.parse(text);
+            } catch(e) {
+                throw new Error('เซิร์ฟเวอร์ส่งการตอบกลับที่ไม่ถูกต้อง โปรดตรวจสอบการตั้งค่า (Server returned HTML instead of JSON)');
+            }
 
             if (response.ok && result.success) {
                 Swal.fire({

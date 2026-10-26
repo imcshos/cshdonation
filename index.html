@@ -1095,6 +1095,36 @@
 </div>
 
 <script>
+    // Environment detection
+    function isStaticHost() {
+        const host = window.location.hostname;
+        return host.includes('github.io') || 
+               host.includes('gitlab.io') || 
+               host.includes('netlify.app') || 
+               host.includes('vercel.app') || 
+               host.includes('pages.dev') ||
+               window.location.protocol === 'file:';
+    }
+
+    let _isPhpCached = null;
+    async function isPhpServerAvailable() {
+        if (isStaticHost()) return false;
+        if (_isPhpCached !== null) return _isPhpCached;
+
+        try {
+            const res = await fetch("api/get_config.php", { method: 'GET' });
+            const ct = res.headers.get('content-type') || '';
+            if (res.ok && ct.includes('application/json')) {
+                const data = await res.json();
+                _isPhpCached = (data && data.success === true);
+                return _isPhpCached;
+            }
+        } catch(err) {}
+
+        _isPhpCached = false;
+        return false;
+    }
+
     // Initialize UI from config
     function initAppConfig() {
         const storedScript = localStorage.getItem('csh_google_script_url') || (typeof CONFIG !== 'undefined' ? CONFIG.GOOGLE_SCRIPT_URL : '');
@@ -1328,19 +1358,10 @@
             btn.disabled = true;
             btnText.innerHTML = '<span class="btn-spinner" style="margin-right: 6px;"></span> กำลังบันทึกข้อมูล...';
 
-            // Check if PHP backend submit.php exists
-            let isPhpAvailable = true;
-            try {
-                const checkRes = await fetch("api/submit.php", { method: 'HEAD' });
-                if (checkRes.status === 404 || checkRes.status === 405) {
-                    isPhpAvailable = false;
-                }
-            } catch(err) {
-                isPhpAvailable = false;
-            }
+            const phpAvailable = await isPhpServerAvailable();
 
-            if (isPhpAvailable) {
-                // Post using PHP submit.php
+            if (phpAvailable) {
+                // Post using PHP submit.php on local server / Apache
                 const formData = new FormData(this);
                 formData.set('receipt_requested', isReceiptYes ? '1' : '0');
                 if (isReceiptYes) {
@@ -1356,7 +1377,14 @@
                     body: formData
                 });
 
-                const result = await response.json();
+                const text = await response.text();
+                let result = {};
+                try {
+                    result = JSON.parse(text);
+                } catch(err) {
+                    throw new Error('เซิร์ฟเวอร์ส่งการตอบกลับที่ไม่ถูกต้อง: ' + text.substring(0, 100));
+                }
+
                 if (response.ok && result.success) {
                     Swal.fire({
                         icon: 'success',
@@ -1373,10 +1401,22 @@
                 }
 
             } else {
-                // Standalone Client-side submit direct to Google Apps Script
+                // Static hosting (GitHub Pages) -> Submit directly to Google Apps Script
                 const scriptUrl = localStorage.getItem('csh_google_script_url') || (typeof CONFIG !== 'undefined' ? CONFIG.GOOGLE_SCRIPT_URL : '');
+                
                 if (!scriptUrl) {
-                    throw new Error('ยังไม่ได้กำหนด Google Apps Script Web App URL กรุณากดปุ่มตั้งค่าด้านล่างเพื่อใส่ URL');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'ยังไม่ได้ระบุ Web App URL',
+                        html: `เนื่องจากโปรเจกต์รันบน GitHub Pages (ระบบ Static ไม่รองรับ PHP)<br>ระบบจึงต้องส่งข้อมูลตรงเข้า Google Apps Script ครับ<br><br>กรุณาคลิกปุ่ม <b>"ตั้งค่า Google Sheet / สถานะระบบ (Admin)"</b> ที่ด้านล่างสุดของหน้า แล้วนำ <b>Web App URL</b> มาวางครับ`,
+                        confirmButtonColor: '#1a5c3a',
+                        confirmButtonText: 'ไปที่การตั้งค่า'
+                    }).then(() => {
+                        openConfigModal();
+                    });
+                    btn.disabled = false;
+                    btnText.innerText = 'บันทึก';
+                    return;
                 }
 
                 const [img1Data, img2Data] = await Promise.all([
@@ -1399,23 +1439,58 @@
                     image2_name: img2Data.name
                 };
 
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                let sendSuccess = false;
+                let successMessage = 'บันทึกข้อมูลการร่วมทำบุญเข้า Google Sheet เรียบร้อยแล้ว ขอขอบพระคุณเป็นอย่างยิ่งค่ะ';
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'บันทึกเรียบร้อยแล้ว',
-                    text: 'ข้อมูลการร่วมทำบุญได้ถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว ขอขอบพระคุณเป็นอย่างยิ่งค่ะ',
-                    confirmButtonColor: '#1a5c3a',
-                    confirmButtonText: 'ตกลง'
-                }).then(() => {
-                    resetDonationForm();
-                    loadWishes();
-                });
+                try {
+                    // Send as text/plain to avoid CORS OPTIONS preflight issues with Google Apps Script
+                    const response = await fetch(scriptUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const text = await response.text();
+                    try {
+                        const result = JSON.parse(text);
+                        if (result && result.message) {
+                            successMessage = result.message;
+                        }
+                        sendSuccess = true;
+                    } catch(jsonErr) {
+                        if (response.ok) {
+                            sendSuccess = true;
+                        } else {
+                            throw new Error(text || 'ไม่สามารถบันทึกข้อมูลได้');
+                        }
+                    }
+                } catch(fetchErr) {
+                    // Fallback to mode: 'no-cors' if browser security strictly blocks Google 302 redirect response
+                    try {
+                        await fetch(scriptUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payload)
+                        });
+                        sendSuccess = true;
+                    } catch(noCorsErr) {
+                        throw new Error('ไม่สามารถส่งข้อมูลไปยัง Google Apps Script ได้: ' + noCorsErr.message);
+                    }
+                }
+
+                if (sendSuccess) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกเรียบร้อยแล้ว',
+                        text: successMessage,
+                        confirmButtonColor: '#1a5c3a',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        resetDonationForm();
+                        loadWishes();
+                    });
+                }
             }
 
         } catch (error) {
@@ -1444,17 +1519,19 @@
             localStorage.setItem('csh_google_script_url', scriptUrl);
             localStorage.setItem('csh_google_sheet_url', sheetUrl);
 
-            // Also try to save to PHP backend
-            try {
-                await fetch('api/save_config.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        google_script_url: scriptUrl,
-                        google_sheet_url: sheetUrl
-                    })
-                });
-            } catch(e) {}
+            // Also try to save to PHP backend if available
+            if (!isStaticHost()) {
+                try {
+                    await fetch('api/save_config.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            google_script_url: scriptUrl,
+                            google_sheet_url: sheetUrl
+                        })
+                    });
+                } catch(e) {}
+            }
 
             Swal.fire({
                 icon: 'success',
@@ -1545,10 +1622,15 @@
         const container = document.getElementById('wishesContainer');
         try {
             let data = null;
-            try {
-                const res = await fetch('api/get_wishes.php');
-                data = await res.json();
-            } catch(e) {}
+            if (!isStaticHost()) {
+                try {
+                    const res = await fetch('api/get_wishes.php');
+                    const ct = res.headers.get('content-type') || '';
+                    if (res.ok && ct.includes('application/json')) {
+                        data = await res.json();
+                    }
+                } catch(e) {}
+            }
 
             if (!data || !data.wishes) {
                 const scriptUrl = localStorage.getItem('csh_google_script_url') || (typeof CONFIG !== 'undefined' ? CONFIG.GOOGLE_SCRIPT_URL : '');
