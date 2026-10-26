@@ -3,7 +3,7 @@
  */
 const CONFIG = {
     // URL ที่ได้จากการ Deploy Google Apps Script Web App
-    GOOGLE_SCRIPT_URL: "",
+    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwPzjIjrmPSMY5OsU7tEXoJHLQfQosHkqIpD3pn6zwhXq5m-q1o9pJJffdUuwL93fWZ/exec",
 
     // ลิงก์สำหรับคลิกเปิดดู Google Sheet
     GOOGLE_SHEET_URL: "",
