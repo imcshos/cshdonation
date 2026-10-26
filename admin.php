@@ -233,18 +233,21 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
 
         /* Dashboard Styles */
         .admin-wrapper {
-            max-width: 1440px;
+            max-width: 1560px;
             margin: 0 auto;
-            padding: 24px 20px 60px;
+            padding: 24px 24px 60px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .donation-main-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2ece7;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .donation-header-box {
@@ -262,7 +265,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             font-family: 'Kanit', sans-serif;
             color: var(--admin-green);
             margin: 0;
-            font-size: clamp(1.2rem, 3vw, 1.55rem);
+            font-size: clamp(1.2rem, 2.5vw, 1.55rem);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -278,23 +281,25 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         .header-actions-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .btn-header {
-            padding: 8px 15px;
+            padding: 8px 14px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.88rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             border: 1px solid transparent;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
+            white-space: nowrap;
         }
 
         .btn-view-public {
@@ -303,10 +308,18 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-color: #cde8da;
         }
 
+        .btn-view-public:hover {
+            background: #d5eedf;
+        }
+
         .btn-refresh {
             background: #f1f5f9;
             color: #334155;
             border-color: #cbd5e1;
+        }
+
+        .btn-refresh:hover {
+            background: #e2e8f0;
         }
 
         .btn-export {
@@ -315,17 +328,25 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-color: #bbf7d0;
         }
 
+        .btn-export:hover {
+            background: #dcfce7;
+        }
+
         .btn-logout {
             background: #fff1f2;
             color: #e11d48;
             border-color: #fecdd3;
         }
 
+        .btn-logout:hover {
+            background: #ffe4e6;
+        }
+
         /* 3 Stats Cards */
         .donation-stat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
             margin-bottom: 22px;
         }
 
@@ -338,6 +359,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             display: flex;
             align-items: center;
             gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .donation-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
         }
 
         .donation-stat-icon {
@@ -364,12 +391,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             margin-top: 2px;
         }
 
-        /* Filters */
+        /* Search and Quick Filters */
         .filter-controls-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 14px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
@@ -388,12 +415,31 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
 
         .search-input-box input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 10px 36px 10px 14px;
             border: 1.5px solid #d4e2dc;
             border-radius: 10px;
             font-size: 0.92rem;
             outline: none;
             background: #ffffff;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .search-input-box input:focus {
+            border-color: var(--admin-green);
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
         }
 
         .btn-search-action {
@@ -407,12 +453,18 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             font-size: 0.9rem;
             font-family: 'Kanit', sans-serif;
             white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .btn-search-action:hover {
+            background: var(--admin-green-dark);
         }
 
         .quick-filter-pills {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .filter-pill {
@@ -424,6 +476,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
+            user-select: none;
+        }
+
+        .filter-pill:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
         .filter-pill.active {
@@ -433,18 +491,40 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             font-weight: 600;
         }
 
-        /* Desktop Table */
+        /* Desktop Table View */
         .desktop-table-view {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid #e2ece7;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+
+        .desktop-table-view::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .desktop-table-view::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .desktop-table-view::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .desktop-table-view::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         table.admin-donation-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1280px;
+            min-width: 1180px;
             font-size: 0.86rem;
         }
 
@@ -456,14 +536,25 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         }
 
         table.admin-donation-table th {
+            position: sticky;
+            top: 0;
+            background: #f4faf6;
+            z-index: 3;
             padding: 12px 10px;
             color: var(--admin-green);
             font-weight: 600;
             font-family: 'Kanit', sans-serif;
+            font-size: 0.88rem;
+            box-shadow: 0 1px 0 #d4ece0;
         }
 
         table.admin-donation-table tbody tr {
             border-bottom: 1px solid #eef4f1;
+            transition: background 0.15s;
+        }
+
+        table.admin-donation-table tbody tr:hover {
+            background: #fbfdfc;
         }
 
         table.admin-donation-table td {
@@ -471,6 +562,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             vertical-align: middle;
         }
 
+        /* Badges & Tags */
         .badge-status-on {
             background: #e1f5ec;
             color: #116843;
@@ -483,6 +575,11 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             gap: 4px;
             border: 1px solid #b7e3cf;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-status-on:hover {
+            background: #cdeee0;
         }
 
         .badge-status-off {
@@ -497,6 +594,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             gap: 4px;
             border: 1px solid #cbd5e1;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-status-off:hover {
+            background: #e2e8f0;
+            color: #334155;
         }
 
         .badge-receipt-yes {
@@ -507,6 +610,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-radius: 12px;
             font-weight: 600;
             border: 1px solid #c7d2fe;
+            display: inline-block;
         }
 
         .badge-receipt-no {
@@ -516,6 +620,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             padding: 3px 8px;
             border-radius: 12px;
             font-weight: 500;
+            display: inline-block;
         }
 
         .badge-social-yes {
@@ -526,6 +631,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-radius: 12px;
             font-weight: 700;
             border: 1px solid #b7e3cf;
+            display: inline-block;
         }
 
         .badge-social-no {
@@ -536,6 +642,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-radius: 12px;
             font-weight: 600;
             border: 1px solid #fecdd3;
+            display: inline-block;
         }
 
         .badge-tax-id {
@@ -547,6 +654,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border: 1px solid #e2e8f0;
             font-weight: 600;
             color: #0f172a;
+            display: inline-block;
         }
 
         .thumb-preview-box {
@@ -563,13 +671,17 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-radius: 8px;
             object-fit: cover;
             cursor: pointer;
-            border: 1px solid #d4dfd9;
+            border: 1.5px solid #d4dfd9;
             transition: all 0.2s;
+            background: #f8fafc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: block;
         }
 
         .thumb-admin-img:hover {
-            transform: scale(1.1);
+            transform: scale(1.12);
             border-color: #1a5c3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
         }
 
         .btn-delete-row {
@@ -581,9 +693,19 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             cursor: pointer;
             font-size: 0.82rem;
             font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Mobile View */
+        .btn-delete-row:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        /* Mobile Cards View */
         .mobile-cards-view {
             display: none;
         }
@@ -591,11 +713,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         .mobile-donation-card {
             background: #ffffff;
             border: 1px solid #e3ede8;
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 14px 12px;
+            box-shadow: 0 2px 8px rgba(26, 92, 58, 0.04);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .mobile-card-top {
@@ -603,52 +726,65 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             justify-content: space-between;
             align-items: flex-start;
             border-bottom: 1px solid #f1f5f3;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            gap: 8px;
         }
 
         .mobile-card-donor {
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: 600;
             color: #1a5c3a;
             font-family: 'Kanit', sans-serif;
+            line-height: 1.3;
         }
 
         .mobile-card-date {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: #64748b;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .mobile-card-message {
             background: #fbfdfc;
             border: 1px solid #ebf3ef;
             border-radius: 10px;
-            padding: 12px;
-            font-size: 0.92rem;
+            padding: 10px 12px;
+            font-size: 0.88rem;
             color: #334155;
-            line-height: 1.6;
+            line-height: 1.55;
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .mobile-tax-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.82rem;
+            padding: 9px 11px;
+            font-size: 0.8rem;
             display: grid;
-            gap: 6px;
+            gap: 5px;
         }
 
         .mobile-card-thumbs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .mobile-card-thumbs .thumb-admin-img {
-            width: 64px;
-            height: 64px;
+            width: 70px;
+            height: 70px;
             border-radius: 10px;
+            border: 1.5px solid #d4dfd9;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .mobile-card-thumbs .thumb-admin-img:active {
+            transform: scale(0.96);
+            border-color: #1a5c3a;
         }
 
         .mobile-card-actions {
@@ -656,64 +792,221 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid #f1f5f3;
-            padding-top: 10px;
+            padding-top: 8px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        /* Lightbox */
-        .image-modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.9);
-            display: none;
-            place-items: center;
-            padding: 16px;
-            z-index: 999999;
-            backdrop-filter: blur(5px);
+        /* Loading Skeleton & Empty States */
+        .skeleton-row {
+            height: 48px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 8px;
+            margin: 6px 0;
         }
 
-        .image-modal-content {
-            max-width: 95vw;
-            max-height: 90vh;
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .empty-state-box {
+            text-align: center;
+            padding: 40px 16px;
+            color: #94a3b8;
+            background: #fbfdfc;
             border-radius: 14px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            border: 1px dashed #d4e2dc;
+            margin: 10px 0;
+            font-size: 0.9rem;
         }
 
-        .image-modal-content img {
-            max-width: 100%;
-            max-height: 75vh;
-            display: block;
-            border-radius: 10px;
-            object-fit: contain;
+        /* ==========================================================================
+           RESPONSIVE BREAKPOINTS (COMPUTER & MOBILE FIT)
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .desktop-table-view {
+                display: none !important;
+            }
+
+            .mobile-cards-view {
+                display: flex !important;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .admin-wrapper {
+                padding: 14px 12px 48px !important;
+            }
+
+            .donation-main-card {
+                padding: 16px 14px !important;
+                border-radius: 16px !important;
+            }
+
+            .donation-header-box {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px !important;
+                margin-bottom: 16px !important;
+                padding-bottom: 14px !important;
+            }
+
+            .header-title-group h2 {
+                font-size: 1.25rem !important;
+            }
+
+            .header-title-group small {
+                font-size: 0.82rem !important;
+            }
+
+            .header-actions-group {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+
+            .header-actions-group .btn-header {
+                width: 100% !important;
+                justify-content: center !important;
+                text-align: center !important;
+                font-size: 0.84rem !important;
+                padding: 9px 8px !important;
+                box-sizing: border-box !important;
+            }
+
+            .header-actions-group .btn-logout {
+                grid-column: span 2 !important;
+            }
+
+            .filter-controls-box {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .search-form-wrap {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .search-input-box input {
+                font-size: 0.88rem !important;
+                padding: 9px 34px 9px 12px !important;
+            }
+
+            .btn-search-action {
+                padding: 9px 16px !important;
+                font-size: 0.88rem !important;
+            }
+
+            .quick-filter-pills {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding: 2px 2px 6px !important;
+                flex-wrap: nowrap !important;
+            }
+
+            .quick-filter-pills::-webkit-scrollbar {
+                display: none;
+            }
+
+            .quick-filter-pills .filter-pill {
+                white-space: nowrap !important;
+                padding: 6px 12px !important;
+                font-size: 0.78rem !important;
+                flex-shrink: 0 !important;
+            }
         }
 
-        .btn-close-modal {
-            position: absolute;
-            top: -14px;
-            right: -14px;
-            background: rgba(0, 0, 0, 0.75);
-            color: white;
-            border: 2px solid #ffffff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: grid;
-            place-items: center;
-        }
+        @media (max-width: 640px) {
+            .admin-wrapper {
+                padding: 8px 6px 36px !important;
+            }
 
-        @media (max-width: 820px) {
-            .desktop-table-view { display: none !important; }
-            .mobile-cards-view { display: flex !important; flex-direction: column; gap: 14px; }
-            .donation-header-box { flex-direction: column; align-items: flex-start !important; }
-            .header-actions-group { width: 100%; }
-            .header-actions-group .btn-header { flex: 1 1 calc(50% - 6px); justify-content: center; }
-            .filter-controls-box { flex-direction: column; align-items: stretch; }
-            .search-form-wrap { max-width: 100%; }
+            .donation-main-card {
+                padding: 12px 10px !important;
+                border-radius: 14px !important;
+            }
+
+            /* Compact 3 Stats Cards in 1 Row on Mobile Phones */
+            .donation-stat-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+                margin-bottom: 12px !important;
+            }
+
+            .donation-stat-card {
+                padding: 8px 6px !important;
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 4px !important;
+                border-radius: 10px !important;
+            }
+
+            .donation-stat-icon {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 16px !important;
+                border-radius: 8px !important;
+                margin: 0 auto !important;
+            }
+
+            .stat-label {
+                font-size: 0.68rem !important;
+                line-height: 1.2 !important;
+                height: 2.4em !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .stat-value {
+                font-size: 1.15rem !important;
+                margin-top: 0 !important;
+                line-height: 1.1 !important;
+            }
+
+            /* Mobile Login Overlay */
+            #loginOverlay {
+                padding: 12px !important;
+            }
+
+            .login-card {
+                padding: 24px 16px !important;
+                border-radius: 16px !important;
+                max-width: 100% !important;
+            }
+
+            .login-logo-wrap {
+                width: 58px !important;
+                height: 58px !important;
+                margin-bottom: 12px !important;
+            }
+
+            .login-title {
+                font-size: 1.25rem !important;
+            }
+
+            .login-sub {
+                font-size: 0.82rem !important;
+                margin-bottom: 16px !important;
+            }
+
+            .password-input-wrap input {
+                padding: 11px 40px 11px 12px !important;
+                font-size: 0.95rem !important;
+            }
+
+            .btn-login-submit {
+                padding: 12px !important;
+                font-size: 0.95rem !important;
+            }
         }
     </style>
 </head>
