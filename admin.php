@@ -870,37 +870,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
     </div>
 </div>
 
-<!-- Image Lightbox Modal with Mobile Download Support -->
-<div class="image-modal-backdrop" id="adminImageModal" onclick="closeAdminImageModal()">
-    <div class="image-modal-content" onclick="event.stopPropagation()">
-        <button type="button" class="btn-close-modal" onclick="closeAdminImageModal()" title="ปิดหน้าต่าง">✕</button>
-        <div style="width: 100%; text-align: center;">
-            <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ" style="-webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; cursor: pointer;" title="แตะค้างที่รูปภาพเพื่อบันทึก">
-        </div>
 
-        <!-- LINE specific guidance box -->
-        <div id="lineModalGuide" style="display: none; background: #e8f5ee; border: 1.5px solid #28a745; border-radius: 10px; padding: 10px 14px; margin-top: 8px; text-align: center; color: #166534; font-size: 0.88rem; width: 100%;">
-            📱 <strong>วิธีบันทึกภาพบนแอป LINE:</strong><br>
-            👉 <strong>แตะค้างที่รูปภาพด้านบน</strong> แล้วเลือกเมนู <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
-        </div>
-
-        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; margin-top: 10px;">
-            <button type="button" onclick="downloadCurrentModalImage()" style="background: #1a5c3a; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; font-family: inherit;">
-                ⬇️ ดาวน์โหลด / บันทึกรูป
-            </button>
-            <a id="adminOpenTabLink" href="" target="_blank" rel="noopener" style="background: white; color: #1a5c3a; border: 1.5px solid #1a5c3a; padding: 10px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem;">
-                🔍 เปิดภาพเต็มในแท็บใหม่
-            </a>
-            <a id="adminLineExtLink" href="" target="_blank" rel="noopener" style="display: none; background: #06c755; color: white; padding: 10px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; align-items: center; gap: 6px; font-size: 0.92rem;" title="เปิดใน Safari / Chrome เพื่อดาวน์โหลด">
-                🌐 เปิดใน Safari / Chrome
-            </a>
-        </div>
-
-        <div class="modal-mobile-guide" id="modalGeneralGuide" style="color: #e2e8f0; font-size: 0.78rem; text-align: center; background: rgba(0,0,0,0.45); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); margin-top: 4px;">
-            📱 <strong>สะดวกบนมือถือ:</strong> สามารถแตะปุ่ม <em>"ดาวน์โหลด"</em> หรือ <strong>แตะค้างที่รูปภาพ</strong> เพื่อเลือก <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
-        </div>
-    </div>
-</div>
 
 <script src="config.js"></script>
 <script>
@@ -1007,8 +977,20 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             const img1 = formatImageUrl(item.image1);
             const img2 = formatImageUrl(item.image2);
             let thumbs = '';
-            if (img1) thumbs += `<img src="${img1}" class="thumb-admin-img" onclick="openAdminImageModal('${img1}')">`;
-            if (img2) thumbs += `<img src="${img2}" class="thumb-admin-img" onclick="openAdminImageModal('${img2}')">`;
+            if (img1) {
+                thumbs += `
+                    <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img1}')" title="คลิกเพื่อเปิดรูปภาพใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                        <img src="${img1}" class="thumb-admin-img" alt="รูปที่ 1" onerror="this.parentElement.style.display='none'">
+                    </a>
+                `;
+            }
+            if (img2) {
+                thumbs += `
+                    <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img2}')" title="คลิกเพื่อเปิดสลิปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                        <img src="${img2}" class="thumb-admin-img" alt="สลิปโอนเงิน" onerror="this.parentElement.style.display='none'">
+                    </a>
+                `;
+            }
             if (!thumbs) thumbs = '<span style="color:#cbd5e1;">—</span>';
 
             const statusBtn = item.is_approved
@@ -1040,20 +1022,24 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             if (img1) {
                 mobileThumbs += `
                     <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <img src="${img1}" class="thumb-admin-img" title="รูปที่ 1 (แตะเพื่อขยาย)" onclick="openAdminImageModal('${img1}')">
-                        <button type="button" class="btn-mobile-quick-dl" onclick="handleImageAction('${img1}')" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer;" title="แตะดูรูปเพื่อบันทึก">
-                            🔍 ดูรูป / เซฟ
-                        </button>
+                        <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img1}')" title="แตะเพื่อเปิดรูปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                            <img src="${img1}" class="thumb-admin-img" alt="รูปที่ 1" onerror="this.parentElement.parentElement.style.display='none'">
+                        </a>
+                        <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" class="btn-mobile-quick-dl" onclick="openImageExternal(event, '${img1}')" title="เปิดรูปใน Safari / Chrome" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer; text-decoration:none;">
+                            🌐 เปิดใน Safari/Chrome
+                        </a>
                     </div>
                 `;
             }
             if (img2) {
                 mobileThumbs += `
                     <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน (แตะเพื่อขยาย)" onclick="openAdminImageModal('${img2}')">
-                        <button type="button" class="btn-mobile-quick-dl" onclick="handleImageAction('${img2}')" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer;" title="แตะดูสลิปเพื่อบันทึก">
-                            🔍 ดูสลิป / เซฟ
-                        </button>
+                        <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img2}')" title="แตะเพื่อเปิดสลิปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                            <img src="${img2}" class="thumb-admin-img" alt="สลิปโอนเงิน" onerror="this.parentElement.parentElement.style.display='none'">
+                        </a>
+                        <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" class="btn-mobile-quick-dl" onclick="openImageExternal(event, '${img2}')" title="เปิดสลิปใน Safari / Chrome" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer; text-decoration:none;">
+                            🌐 เปิดใน Safari/Chrome
+                        </a>
                     </div>
                 `;
             }
@@ -1152,117 +1138,40 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         }
     }
 
-    function handleImageAction(imgUrl) {
+    function getExternalImageUrl(imgUrl) {
+        if (!imgUrl) return '#';
+        const separator = imgUrl.includes('?') ? '&' : '?';
+        return isLineApp() ? `${imgUrl}${separator}openExternalBrowser=1` : imgUrl;
+    }
+
+    function openImageExternal(e, imgUrl) {
+        if (e && e.preventDefault) e.preventDefault();
         if (!imgUrl) return;
-        openAdminImageModal(imgUrl);
+
+        if (isLineApp()) {
+            // Appending openExternalBrowser=1 opens Safari on iOS or Chrome on Android directly from LINE
+            const separator = imgUrl.includes('?') ? '&' : '?';
+            const extUrl = `${imgUrl}${separator}openExternalBrowser=1`;
+            window.location.href = extUrl;
+        } else {
+            // Standard desktop/mobile browser
+            window.open(imgUrl, '_blank', 'noopener,noreferrer');
+        }
     }
 
     function openAdminImageModal(src) {
-        if (!src) return;
-        currentModalImgUrl = src;
-        const modal = document.getElementById('adminImageModal');
-        const img = document.getElementById('adminModalPreviewImg');
-        const openLink = document.getElementById('adminOpenTabLink');
-        const lineExtLink = document.getElementById('adminLineExtLink');
-        const lineModalGuide = document.getElementById('lineModalGuide');
-        const modalGeneralGuide = document.getElementById('modalGeneralGuide');
-
-        img.src = src;
-        if (openLink) openLink.href = src;
-
-        if (isLineApp()) {
-            const extUrl = src + (src.includes('?') ? '&' : '?') + 'openExternalBrowser=1';
-            if (lineExtLink) {
-                lineExtLink.href = extUrl;
-                lineExtLink.style.display = 'inline-flex';
-            }
-            if (lineModalGuide) lineModalGuide.style.display = 'block';
-            if (modalGeneralGuide) modalGeneralGuide.style.display = 'none';
-        } else {
-            if (lineExtLink) lineExtLink.style.display = 'none';
-            if (lineModalGuide) lineModalGuide.style.display = 'none';
-            if (modalGeneralGuide) modalGeneralGuide.style.display = 'block';
-        }
-
-        modal.style.display = 'grid';
+        openImageExternal(null, src);
     }
 
-    function closeAdminImageModal() {
-        document.getElementById('adminImageModal').style.display = 'none';
-        currentModalImgUrl = '';
+    function handleImageAction(src) {
+        openImageExternal(null, src);
     }
 
-    async function downloadCurrentModalImage() {
-        if (!currentModalImgUrl) return;
-        await downloadDirectImage(currentModalImgUrl);
+    function downloadDirectImage(imgUrl) {
+        openImageExternal(null, imgUrl);
     }
 
-    async function downloadDirectImage(imgUrl) {
-        if (!imgUrl) return;
-
-        // LINE browser download intercept
-        if (isLineApp()) {
-            openAdminImageModal(imgUrl);
-            const extUrl = imgUrl + (imgUrl.includes('?') ? '&' : '?') + 'openExternalBrowser=1';
-            
-            Swal.fire({
-                icon: 'info',
-                title: 'วิธีบันทึกรูปภาพบนแอป LINE',
-                html: `
-                    <div style="text-align: left; font-size: 0.92rem; line-height: 1.6; color: #334155;">
-                        <p>เนื่องจากเปิดในแอป LINE ระบบความปลอดภัยไม่อนุญาตให้กดดาวน์โหลดไฟล์ตรงๆ ลงเครื่อง</p>
-                        <div style="background: #e8f5ee; border: 1.5px solid #28a745; border-radius: 10px; padding: 12px; margin: 10px 0; color: #166534;">
-                            👉 <strong>วิธีบันทึกภาพลงเครื่อง:</strong><br>
-                            <strong>แตะค้างที่รูปภาพ</strong> ที่แสดงอยู่บนหน้าจอ แล้วเลือก <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
-                        </div>
-                        <p style="font-size: 0.82rem; color: #64748b; margin-top: 6px;">
-                            หรือเลือก <b>"เปิดใน Safari / Chrome"</b> เพื่อเปิดเบราว์เซอร์หลักสำหรับดาวน์โหลดไฟล์
-                        </p>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonColor: '#1a5c3a',
-                cancelButtonColor: '#06c755',
-                confirmButtonText: 'แตะค้างที่รูปเพื่อบันทึก',
-                cancelButtonText: '🌐 เปิดใน Safari / Chrome'
-            }).then((res) => {
-                if (res.dismiss === Swal.DismissReason.cancel) {
-                    window.location.href = extUrl;
-                }
-            });
-            return;
-        }
-
-        const filename = 'CSH_Donation_' + Date.now().toString().slice(-6) + '.jpg';
-
-        try {
-            const res = await fetch(imgUrl, { mode: 'cors' });
-            if (res.ok) {
-                const blob = await res.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
-                return;
-            }
-        } catch(e) {}
-
-        const a = document.createElement('a');
-        a.href = imgUrl;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (!isIOS) {
-            a.download = filename;
-        }
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+    function downloadCurrentModalImage() {}
 
     function formatImageUrl(url) {
         if (!url) return '';
