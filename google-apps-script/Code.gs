@@ -156,12 +156,15 @@ function doGet(e) {
           var allowPost = String(row[8]);
           var msg = String(row[2] || "").trim();
           if ((allowPost === "อนุญาต" || allowPost === "1") && msg !== "") {
+            var rawImg1 = String(row[9] || "").trim();
+            var rawImg2 = String(row[10] || "").trim();
+
             wishes.push({
               time: row[0],
               name: row[1] || "ผู้มีจิตศรัทธา",
               message: msg,
-              image1: row[9] || "",
-              image2: row[10] || ""
+              image1: toDriveDirectUrl(rawImg1),
+              image2: toDriveDirectUrl(rawImg2)
             });
           }
         }
@@ -226,4 +229,21 @@ function getOrCreateUploadFolder(folderName) {
   var newFolder = DriveApp.createFolder(folderName);
   newFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return newFolder;
+}
+
+/**
+ * แปลง Google Drive view URL เป็น Direct image URL
+ */
+function toDriveDirectUrl(url) {
+  if (!url) return "";
+  var str = String(url).trim();
+  if (!str) return "";
+  var match = str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || str.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return "https://lh3.googleusercontent.com/d/" + match[1];
+  }
+  if (str.indexOf("http://") === 0 || str.indexOf("https://") === 0 || str.indexOf("data:image/") === 0) {
+    return str;
+  }
+  return "";
 }

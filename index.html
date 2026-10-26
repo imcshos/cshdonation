@@ -1617,6 +1617,31 @@
         }
     }
 
+    // Convert Google Drive view URLs to direct image CDN URLs
+    function formatImageUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        url = url.trim();
+        if (!url) return '';
+        
+        // Extract Google Drive ID if present (e.g. drive.google.com/file/d/ID/view or ?id=ID)
+        const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (driveMatch && driveMatch[1]) {
+            return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+        }
+        
+        // Check if already an http(s) URL or data URL
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:image/')) {
+            return url;
+        }
+        
+        // Check if relative path starting with uploads/
+        if (url.startsWith('uploads/')) {
+            return url;
+        }
+        
+        return '';
+    }
+
     // Load Recent Wishes
     async function loadWishes() {
         const container = document.getElementById('wishesContainer');
@@ -1643,12 +1668,14 @@
             if (data && data.wishes && data.wishes.length > 0) {
                 container.innerHTML = data.wishes.map(wish => {
                     const initial = (wish.name || 'ผ').charAt(0).toUpperCase();
+                    const img1 = formatImageUrl(wish.image1);
+                    const img2 = formatImageUrl(wish.image2);
                     let thumbs = '';
-                    if (wish.image1) {
-                        thumbs += `<img src="${wish.image1}" class="wish-img-thumb" alt="ภาพถ่าย" onclick="openImageModal(this.src)">`;
+                    if (img1) {
+                        thumbs += `<img src="${img1}" class="wish-img-thumb" alt="ภาพถ่าย" onerror="this.style.display='none'" onclick="openImageModal(this.src)">`;
                     }
-                    if (wish.image2) {
-                        thumbs += `<img src="${wish.image2}" class="wish-img-thumb" alt="สลิป" onclick="openImageModal(this.src)">`;
+                    if (img2) {
+                        thumbs += `<img src="${img2}" class="wish-img-thumb" alt="สลิป" onerror="this.style.display='none'" onclick="openImageModal(this.src)">`;
                     }
 
                     return `
