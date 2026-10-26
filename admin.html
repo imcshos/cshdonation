@@ -538,19 +538,74 @@
             font-weight: 600;
         }
 
-        /* Banner info when GAS deployment needs sync */
-        .notice-banner {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 0.86rem;
-            display: flex;
+        /* Thumbnail Cell & Quick Share */
+        .thumb-cell-wrapper {
+            display: inline-flex;
+            flex-direction: column;
             align-items: center;
+            gap: 6px;
+        }
+
+        .btn-share-inline {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-share-inline:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+            transform: translateY(-1px);
+        }
+
+        .mobile-thumbs-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-top: 4px;
+        }
+
+        .mobile-thumbs-header {
+            display: flex;
             justify-content: space-between;
-            gap: 12px;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-mobile-share-all {
+            background: #166534;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(22, 101, 52, 0.2);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-mobile-share-all:active {
+            transform: scale(0.96);
+            background: #14532d;
         }
 
         /* Desktop Table View */
@@ -1155,9 +1210,6 @@
             </div>
         </div>
 
-        <!-- Notice banner if syncing is needed -->
-        <div id="noticeBannerBox" style="display: none;"></div>
-
         <!-- 3 Stats Cards -->
         <div class="donation-stat-grid">
             <div class="donation-stat-card">
@@ -1517,7 +1569,6 @@
                                     is_approved: true
                                 }))
                             };
-                            showGasUpdateNotice();
                         }
                     }
                 }
@@ -1564,6 +1615,7 @@
             allDonations = loadedData.donations;
             updateStatsUI(loadedData);
             renderDonationsUI();
+            preloadDonationImages(allDonations);
 
             if (showToast) {
                 Swal.fire({
@@ -1579,21 +1631,6 @@
             allDonations = [];
             updateStatsUI({ totalDonations: 0, withImagesCount: 0, receiptCount: 0 });
             renderDonationsUI();
-        }
-    }
-
-    function showGasUpdateNotice() {
-        const box = document.getElementById('noticeBannerBox');
-        if (box) {
-            box.innerHTML = `
-                <div class="notice-banner">
-                    <div>
-                        <strong>💡 แนะนำสำหรับผู้ดูแล:</strong> กำลังแสดงข้อมูลเฉพาะรายการที่เปิดเผยบนเว็บ หากต้องการให้หน้า Admin แสดงครบทุกคอลัมน์ (ชื่อลดหย่อนภาษี, เลขประจำตัวผู้เสียภาษี, ปุ่มซ่อน/แสดง, ปุ่มลบ) กรุณานำโค้ดในไฟล์ <code>google-apps-script/Code.gs</code> ไปวางและ Deploy ใหม่ใน Google Apps Script ค่ะ
-                    </div>
-                    <button type="button" onclick="this.parentElement.style.display='none'" style="background:none;border:none;cursor:pointer;color:#166534;font-size:16px;">✕</button>
-                </div>
-            `;
-            box.style.display = 'block';
         }
     }
 
@@ -1673,7 +1710,16 @@
             if (!thumbsHtml) {
                 thumbsHtml = '<span style="color: #cbd5e1; font-size: 0.8rem;">—</span>';
             } else {
-                thumbsHtml = `<div class="thumb-preview-box">${thumbsHtml}</div>`;
+                const imgCount = (img1 ? 1 : 0) + (img2 ? 1 : 0);
+                const shareLabel = imgCount > 1 ? '📤 แชร์รูป (2 รูป)' : '📤 แชร์รูป';
+                thumbsHtml = `
+                    <div class="thumb-cell-wrapper" onmouseenter="quickPreloadRow(${item.row})" ontouchstart="quickPreloadRow(${item.row})">
+                        <div class="thumb-preview-box">${thumbsHtml}</div>
+                        <button type="button" class="btn-share-inline" onclick="shareDonationByRow(${item.row})" title="คลิกเพื่อแชร์รูปภาพทันที">
+                            ${shareLabel}
+                        </button>
+                    </div>
+                `;
             }
 
             const receiptBadge = (item.receipt_requested === 'รับ')
@@ -1830,8 +1876,13 @@
                     `}
 
                     ${thumbsHtml ? `
-                        <div>
-                            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px; font-weight: 500;">📷 รูปภาพและสลิปแนบ:</div>
+                        <div class="mobile-thumbs-box" ontouchstart="quickPreloadRow(${item.row})">
+                            <div class="mobile-thumbs-header">
+                                <span style="font-size: 0.82rem; color: #475569; font-weight: 600;">📷 รูปภาพและสลิปแนบ:</span>
+                                <button type="button" class="btn-mobile-share-all" onclick="shareDonationByRow(${item.row})">
+                                    📤 แชร์รูปภาพ${(img1 && img2) ? ' (แชร์พร้อมกัน 2 รูป)' : ''}
+                                </button>
+                            </div>
                             <div class="mobile-card-thumbs">${thumbsHtml}</div>
                         </div>
                     ` : ''}
@@ -2065,6 +2116,312 @@
     }
 
     function downloadCurrentModalImage() {}
+
+    // Image File In-Memory Cache for Instant Web Share
+    const imageFileCache = new Map();
+
+    function preloadDonationImages(donations) {
+        if (!donations || !Array.isArray(donations)) return;
+        donations.forEach(item => {
+            const u1 = formatImageUrl(item.image1);
+            const u2 = formatImageUrl(item.image2);
+            if (u1 && !imageFileCache.has(u1)) {
+                loadImageAsFile(u1, `csh_${item.row}_photo.jpg`).then(file => {
+                    if (file) imageFileCache.set(u1, file);
+                }).catch(() => {});
+            }
+            if (u2 && !imageFileCache.has(u2)) {
+                loadImageAsFile(u2, `csh_${item.row}_slip.jpg`).then(file => {
+                    if (file) imageFileCache.set(u2, file);
+                }).catch(() => {});
+            }
+        });
+    }
+
+    function quickPreloadRow(rowIdx) {
+        const item = allDonations.find(d => Number(d.row) === Number(rowIdx));
+        if (!item) return;
+        const u1 = formatImageUrl(item.image1);
+        const u2 = formatImageUrl(item.image2);
+        if (u1 && !imageFileCache.has(u1)) {
+            loadImageAsFile(u1, `csh_${rowIdx}_photo.jpg`).then(file => {
+                if (file) imageFileCache.set(u1, file);
+            }).catch(() => {});
+        }
+        if (u2 && !imageFileCache.has(u2)) {
+            loadImageAsFile(u2, `csh_${rowIdx}_slip.jpg`).then(file => {
+                if (file) imageFileCache.set(u2, file);
+            }).catch(() => {});
+        }
+    }
+
+    // Share donation images (supports sharing 2 images simultaneously via Web Share API)
+    async function shareDonationByRow(rowIdx) {
+        const item = allDonations.find(d => Number(d.row) === Number(rowIdx));
+        if (!item) {
+            Swal.fire({ icon: 'warning', title: 'ไม่พบข้อมูลรายการนี้' });
+            return;
+        }
+
+        const img1 = formatImageUrl(item.image1);
+        const img2 = formatImageUrl(item.image2);
+        const validUrls = [img1, img2].filter(Boolean);
+
+        if (validUrls.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'ไม่มีรูปภาพแนบ',
+                text: 'รายการนี้ไม่มีรูปภาพหรือสลิปแนบ',
+                confirmButtonColor: '#1a5c3a'
+            });
+            return;
+        }
+
+        const shareTitle = 'รูปภาพการบริจาค - โรงพยาบาลเชียงแสน';
+        const shareText = `รูปภาพและสลิปการร่วมบริจาค${item.donor_name ? ` คุณ${item.donor_name}` : ''} - โรงพยาบาลเชียงแสน`;
+
+        // Check if pre-cached files are available for instant synchronous share
+        const cachedFiles = [];
+        if (img1 && imageFileCache.has(img1)) cachedFiles.push(imageFileCache.get(img1));
+        if (img2 && imageFileCache.has(img2)) cachedFiles.push(imageFileCache.get(img2));
+
+        // If all files are already loaded in memory -> immediate synchronous share
+        if (cachedFiles.length === validUrls.length && navigator.canShare && navigator.canShare({ files: cachedFiles })) {
+            try {
+                await navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    files: cachedFiles
+                });
+                return;
+            } catch (shareErr) {
+                if (shareErr.name === 'AbortError') return; // User closed sheet
+                console.warn('Sync share error:', shareErr);
+            }
+        }
+
+        // If not cached yet or sync share was blocked, show loading and fetch
+        const isDouble = validUrls.length > 1;
+        Swal.fire({
+            title: isDouble ? 'กำลังเปิดหน้าต่างแชร์ (2 รูป)...' : 'กำลังเปิดหน้าต่างแชร์...',
+            text: 'กำลังโหลดรูปภาพเพื่อเปิดหน้าต่างแชร์ทันที',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        try {
+            const timestamp = Date.now();
+            const promises = validUrls.map((url, idx) => {
+                if (imageFileCache.has(url)) return Promise.resolve(imageFileCache.get(url));
+                const filename = `csh_donation_${item.row || timestamp}_${idx + 1}.jpg`;
+                return loadImageAsFile(url, filename).then(file => {
+                    if (file) imageFileCache.set(url, file);
+                    return file;
+                });
+            });
+
+            const files = (await Promise.all(promises)).filter(Boolean);
+
+            if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                Swal.close();
+                const shareData = { title: shareTitle, text: shareText, files: files };
+                try {
+                    await navigator.share(shareData);
+                } catch (shareErr) {
+                    if (shareErr.name === 'NotAllowedError') {
+                        showTapToShareModal(shareData, validUrls, files, item.donor_name);
+                    } else if (shareErr.name !== 'AbortError') {
+                        showShareFallbackModal(validUrls, files, item.donor_name);
+                    }
+                }
+                return;
+            }
+
+            Swal.close();
+            showShareFallbackModal(validUrls, files, item.donor_name);
+        } catch (err) {
+            Swal.close();
+            if (err.name === 'AbortError') return;
+            console.warn('Share error:', err);
+            showShareFallbackModal(validUrls, [], item.donor_name);
+        }
+    }
+
+    async function loadImageAsFile(url, defaultName = 'image.jpg') {
+        if (!url) return null;
+
+        // Case 1: Data URL
+        if (url.startsWith('data:image/')) {
+            try {
+                const parts = url.split(',');
+                const mime = parts[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+                const bstr = atob(parts[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new File([u8arr], defaultName, { type: mime });
+            } catch (e) {
+                console.warn('Data URL to File conversion error:', e);
+            }
+        }
+
+        // Case 2: Direct fetch (works for same origin / CORS enabled lh3)
+        try {
+            const response = await fetch(url, { mode: 'cors', credentials: 'omit' });
+            if (response.ok) {
+                const blob = await response.blob();
+                let mime = blob.type;
+                if (!mime || mime === 'application/octet-stream') {
+                    mime = defaultName.endsWith('.png') ? 'image/png' : 'image/jpeg';
+                }
+                return new File([blob], defaultName, { type: mime });
+            }
+        } catch (fetchErr) {
+            console.warn('Direct fetch failed, falling back to Canvas for:', url, fetchErr);
+        }
+
+        // Case 3: Canvas drawing fallback
+        try {
+            return await new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(new File([blob], defaultName, { type: 'image/jpeg' }));
+                            } else {
+                                resolve(null);
+                            }
+                        }, 'image/jpeg', 0.95);
+                    } catch (e) {
+                        console.warn('Canvas toBlob failed:', e);
+                        resolve(null);
+                    }
+                };
+                img.onerror = () => resolve(null);
+                img.src = url;
+            });
+        } catch (e) {
+            console.warn('Canvas fallback error:', e);
+        }
+
+        return null;
+    }
+
+    function showTapToShareModal(shareData, urls, files, donorName) {
+        const count = shareData.files.length;
+        Swal.fire({
+            icon: 'success',
+            title: 'รูปภาพพร้อมแชร์แล้ว',
+            html: `
+                <p style="color:#475569; font-size:0.9rem; margin:0 0 14px;">แตะปุ่มด้านล่างเพื่อแชร์ทันที${count > 1 ? ' (พร้อมกัน 2 รูป)' : ''}</p>
+                <button id="btnTapShareNow" class="swal2-confirm swal2-styled" style="background-color:#166534; margin:0; width:100%; font-size:1rem; padding:12px; font-weight:600;">
+                    📤 แตะเพื่อแชร์ทันที${count > 1 ? ' (2 รูป)' : ''}
+                </button>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            didOpen: () => {
+                document.getElementById('btnTapShareNow')?.addEventListener('click', () => {
+                    // Call share synchronously inside the click handler (fresh user gesture)
+                    navigator.share(shareData).then(() => Swal.close()).catch(err => {
+                        Swal.close();
+                        if (err && err.name !== 'AbortError') showShareFallbackModal(urls, files, donorName);
+                    });
+                });
+            }
+        });
+    }
+
+    function showShareFallbackModal(urls, files, donorName) {
+        const isMultiple = urls.length > 1;
+        const inLine = isLineApp();
+        Swal.fire({
+            title: isMultiple ? 'แชร์รูปภาพ (2 รูป)' : 'แชร์รูปภาพ',
+            html: `
+                <div style="text-align: center; margin-bottom: 12px;">
+                    <p style="color: #475569; font-size: 0.9rem; margin: 0 0 12px;">
+                        ${donorName ? `ผู้บริจาค: <strong>${escapeHtml(donorName)}</strong>` : 'ข้อมูลการบริจาค'}
+                    </p>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 16px;">
+                        ${urls.map((u, i) => `
+                            <a href="${u}" target="_blank" rel="noopener" title="คลิกดูภาพใหญ่">
+                                <img src="${u}" style="width: 88px; height: 88px; object-fit: cover; border-radius: 10px; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.08);" alt="รูปที่ ${i+1}">
+                            </a>
+                        `).join('')}
+                    </div>
+                    <p style="color: #64748b; font-size: 0.82rem; margin: 0 0 14px;">
+                        ${isMultiple ? 'คุณสามารถบันทึกหรือเปิดรูปภาพทั้ง 2 รูปพร้อมกันได้ที่นี่' : 'คุณสามารถบันทึกหรือเปิดรูปภาพได้ที่นี่'}
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button id="btnFallbackDownloadAll" class="swal2-confirm swal2-styled" style="background-color: #1a5c3a; margin: 0; width: 100%; font-size: 0.92rem; padding: 10px;">
+                            💾 ดาวน์โหลด${isMultiple ? 'ทั้ง 2 รูป' : 'รูปภาพ'}
+                        </button>
+                        <button id="btnFallbackOpenAll" class="swal2-confirm swal2-styled" style="background-color: #0284c7; margin: 0; width: 100%; font-size: 0.92rem; padding: 10px;">
+                            🌐 เปิดดู${isMultiple ? 'ทั้ง 2 รูป' : 'รูปภาพ'}ในแท็บใหม่
+                        </button>
+                        ${inLine ? `
+                            <button id="btnFallbackLineExternal" class="swal2-confirm swal2-styled" style="background-color: #06c755; margin: 0; width: 100%; font-size: 0.92rem; padding: 10px;">
+                                🚀 เปิดใน Safari/Chrome (แชร์ผ่านระบบมือถือ)
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            didOpen: () => {
+                document.getElementById('btnFallbackDownloadAll')?.addEventListener('click', () => {
+                    triggerBatchDownload(urls, files);
+                    Swal.close();
+                });
+                document.getElementById('btnFallbackOpenAll')?.addEventListener('click', () => {
+                    urls.forEach(u => window.open(u, '_blank'));
+                    Swal.close();
+                });
+                document.getElementById('btnFallbackLineExternal')?.addEventListener('click', () => {
+                    const separator = window.location.href.includes('?') ? '&' : '?';
+                    window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+                });
+            }
+        });
+    }
+
+    function triggerBatchDownload(urls, files) {
+        if (files && files.length > 0) {
+            files.forEach((file, idx) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(file);
+                    a.download = file.name || `csh_donation_${idx + 1}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+                }, idx * 300);
+            });
+        } else {
+            urls.forEach((u, idx) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = u;
+                    a.download = `csh_donation_${idx + 1}.jpg`;
+                    a.target = '_blank';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, idx * 300);
+            });
+        }
+    }
 
     // 9. Utility Helpers
     function formatImageUrl(url) {
