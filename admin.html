@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการข้อมูลการบริจาคและข้อความกำลังใจ (Admin) - โรงพยาบาลเชียงแสน</title>
     
+    <!-- Prevent aggressive WebKit/In-App caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <script>
+        // หากเปิดผ่านแอป LINE ให้สลับไปเปิดบนเบราว์เซอร์หลัก (Safari / Chrome) อัตโนมัติทันที
+        (function() {
+            var ua = (navigator.userAgent || '').toLowerCase();
+            if (ua.indexOf('line/') > -1 || ua.indexOf('line ') > -1) {
+                if (window.location.search.indexOf('openExternalBrowser=1') === -1) {
+                    var sep = window.location.href.indexOf('?') > -1 ? '&' : '?';
+                    window.location.replace(window.location.href + sep + 'openExternalBrowser=1');
+                }
+            }
+        })();
+    </script>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/hospital.png">
 
@@ -1033,14 +1051,6 @@
 </head>
 <body>
 
-<!-- LINE In-App Browser Notice Banner -->
-<div id="lineNoticeBanner" style="display: none; background: linear-gradient(135deg, #06c755, #05b04c); color: white; padding: 10px 16px; font-size: 0.85rem; text-align: center; font-weight: 500; line-height: 1.45; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 1000;">
-    💬 <strong>เปิดผ่านแอป LINE:</strong> หากต้องการดาวน์โหลดรูปภาพหรือออกรายงานได้สะดวก แนะนำเปิดในเบราว์เซอร์หลัก 
-    <a id="lineOpenExtLink" href="#" style="color: #ffffff; text-decoration: underline; font-weight: 700; background: rgba(0,0,0,0.22); padding: 3px 10px; border-radius: 6px; display: inline-block; margin-left: 6px; margin-top: 2px;">
-        🌐 แตะที่นี่เพื่อเปิดใน Safari / Chrome
-    </a>
-</div>
-
 <!-- ==========================================================================
      ACCESS CONTROL: LOGIN SCREEN OVERLAY (จำกัดสิทธิการเข้าถึง)
      ========================================================================== -->
@@ -1246,7 +1256,6 @@
     }
 
     function checkAuthOnLoad() {
-        checkLineAppEnvironment();
         const isSessionAuth = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
         const expectedToken = btoa(getAdminUsername() + ':' + getAdminPassword());
         const isRememberAuth = localStorage.getItem(AUTH_TOKEN_KEY) === expectedToken || 
@@ -1731,26 +1740,16 @@
             let thumbsHtml = '';
             if (img1) {
                 thumbsHtml += `
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img1}')" title="แตะเพื่อเปิดรูปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
-                            <img src="${img1}" class="thumb-admin-img" alt="รูปที่ 1" onerror="this.parentElement.parentElement.style.display='none'">
-                        </a>
-                        <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" class="btn-mobile-quick-dl" onclick="openImageExternal(event, '${img1}')" title="เปิดรูปใน Safari / Chrome" style="text-decoration:none;">
-                            🌐 เปิดใน Safari/Chrome
-                        </a>
-                    </div>
+                    <a href="${getExternalImageUrl(img1)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img1}')" title="แตะเพื่อเปิดรูปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                        <img src="${img1}" class="thumb-admin-img" alt="รูปที่ 1" onerror="this.parentElement.style.display='none'">
+                    </a>
                 `;
             }
             if (img2) {
                 thumbsHtml += `
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img2}')" title="แตะเพื่อเปิดสลิปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
-                            <img src="${img2}" class="thumb-admin-img" alt="สลิปโอนเงิน" onerror="this.parentElement.parentElement.style.display='none'">
-                        </a>
-                        <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" class="btn-mobile-quick-dl" onclick="openImageExternal(event, '${img2}')" title="เปิดสลิปใน Safari / Chrome" style="text-decoration:none;">
-                            🌐 เปิดใน Safari/Chrome
-                        </a>
-                    </div>
+                    <a href="${getExternalImageUrl(img2)}" target="_blank" rel="noopener" onclick="openImageExternal(event, '${img2}')" title="แตะเพื่อเปิดสลิปใน Safari / Chrome" style="display:inline-block; text-decoration:none;">
+                        <img src="${img2}" class="thumb-admin-img" alt="สลิปโอนเงิน" onerror="this.parentElement.style.display='none'">
+                    </a>
                 `;
             }
 
@@ -2007,18 +2006,6 @@
     function isLineApp() {
         const ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
         return ua.includes('line/') || ua.includes('line ') || /Line/i.test(navigator.userAgent);
-    }
-
-    function checkLineAppEnvironment() {
-        if (isLineApp()) {
-            const banner = document.getElementById('lineNoticeBanner');
-            const link = document.getElementById('lineOpenExtLink');
-            if (banner) banner.style.display = 'block';
-            if (link) {
-                const extPageUrl = window.location.href.split('#')[0] + (window.location.href.includes('?') ? '&' : '?') + 'openExternalBrowser=1';
-                link.href = extPageUrl;
-            }
-        }
     }
 
     function getExternalImageUrl(imgUrl) {
