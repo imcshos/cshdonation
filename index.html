@@ -1381,8 +1381,8 @@
                 if (response.ok && result.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'บันทึกเรียบร้อยแล้ว',
-                        text: result.message,
+                        title: 'บันทึกสำเร็จ',
+                        text: 'โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง',
                         confirmButtonColor: '#1a5c3a',
                         confirmButtonText: 'ตกลง'
                     }).then(() => {
@@ -1433,7 +1433,7 @@
                 };
 
                 let sendSuccess = false;
-                let successMessage = 'บันทึกข้อมูลการร่วมทำบุญเข้า Google Sheet เรียบร้อยแล้ว ขอขอบพระคุณเป็นอย่างยิ่งค่ะ';
+                let successMessage = 'โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง';
 
                 try {
                     // Send as text/plain to avoid CORS OPTIONS preflight issues with Google Apps Script
@@ -1475,8 +1475,8 @@
                 if (sendSuccess) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'บันทึกเรียบร้อยแล้ว',
-                        text: successMessage,
+                        title: 'บันทึกสำเร็จ',
+                        text: 'โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง',
                         confirmButtonColor: '#1a5c3a',
                         confirmButtonText: 'ตกลง'
                     }).then(() => {

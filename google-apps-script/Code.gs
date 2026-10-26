@@ -162,7 +162,7 @@ function doPost(e) {
 
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
-      message: "บันทึกข้อมูลร่วมทำบุญเข้า Google Sheet เรียบร้อยแล้ว ขอขอบพระคุณเป็นอย่างยิ่งค่ะ",
+      message: "โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง",
       row: newRowIdx,
       timestamp: timestampStr
     })).setMimeType(ContentService.MimeType.JSON);

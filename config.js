@@ -19,5 +19,5 @@ const CONFIG = {
 
     // บัญชีผู้ใช้งานและรหัสผ่านสำหรับเข้าสู่ระบบผู้ดูแล (Admin)
     ADMIN_USERNAME: "cshos",
-    ADMIN_PASSWORD: "cshos"
+    ADMIN_PASSWORD: "1119311193"
 };

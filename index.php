@@ -1311,8 +1311,8 @@ $config = get_app_config();
             if (response.ok && result.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'บันทึกเรียบร้อยแล้ว',
-                    text: result.message,
+                    title: 'บันทึกสำเร็จ',
+                    text: 'โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง',
                     confirmButtonColor: '#1a5c3a',
                     confirmButtonText: 'ตกลง'
                 }).then(() => {

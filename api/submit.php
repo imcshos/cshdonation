@@ -212,7 +212,7 @@ try {
     if ($synced) {
         echo json_encode([
             'success'       => true,
-            'message'       => 'บันทึกข้อมูลและส่งไปยัง Google Sheet เรียบร้อยแล้ว ขอขอบพระคุณเป็นอย่างยิ่งค่ะ',
+            'message'       => 'โรงพยาบาลเชียงแสน ขอขอบพระคุณท่านอย่างยิ่ง',
             'synced_google' => true,
             'id'            => $submission_id
         ]);
