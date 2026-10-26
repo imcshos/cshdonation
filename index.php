@@ -921,7 +921,7 @@ $config = get_app_config();
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
                     ดูภาพขยาย
                 </button>
-                <a href="images/donation-qr.jpg" download="ChiangSaen-Hospital-eDonation-QR.jpg" class="btn-qr-action" style="background: #ffffff;">
+                <a href="images/donation-qr.jpg" download="ChiangSaen-Hospital-eDonation-QR.jpg" class="btn-qr-action" style="background: #ffffff;" onclick="handleQrDownload(event, 'images/donation-qr.jpg')">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     บันทึกรูป QR
                 </a>
@@ -1050,7 +1050,10 @@ $config = get_app_config();
 <div class="image-modal-backdrop" id="imageModal" onclick="closeImageModal()">
     <div class="image-modal-content" onclick="event.stopPropagation()">
         <button type="button" class="btn-close-modal" onclick="closeImageModal()">✕</button>
-        <img id="modalPreviewImg" src="" alt="ขยายรูปภาพ">
+        <img id="modalPreviewImg" src="" alt="ขยายรูปภาพ" style="-webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; cursor: pointer;">
+        <div style="color: #e2e8f0; font-size: 0.78rem; text-align: center; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 6px; margin-top: 8px;">
+            📱 แตะค้างที่รูปภาพเพื่อเลือก <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
+        </div>
     </div>
 </div>
 
@@ -1220,6 +1223,25 @@ $config = get_app_config();
     }
 
     // Fullscreen Image Modal
+    function isLineApp() {
+        const ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+        return ua.includes('line/') || ua.includes('line ') || /Line/i.test(navigator.userAgent);
+    }
+
+    function handleQrDownload(e, src) {
+        if (isLineApp()) {
+            e.preventDefault();
+            openImageModal(src);
+            Swal.fire({
+                icon: 'info',
+                title: 'วิธีบันทึกรูป QR บนแอป LINE',
+                html: '<div style="background:#e8f5ee; padding:12px; border-radius:10px; color:#166534; font-size:0.92rem; text-align:left;">👉 <b>แตะค้างที่รูปภาพ QR</b> ด้านบน แล้วกด <b>"บันทึกรูปภาพ (Save Image)"</b> ได้เลยค่ะ</div>',
+                confirmButtonColor: '#1a5c3a',
+                confirmButtonText: 'เข้าใจแล้ว'
+            });
+        }
+    }
+
     function openImageModal(src) {
         if (!src) return;
         const modal = document.getElementById('imageModal');
