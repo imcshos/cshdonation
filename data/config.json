@@ -1,0 +1,13 @@
+{
+    "google_script_url": "https:\/\/script.google.com\/macros\/s\/AKfycbwPzjIjrmPSMY5OsU7tEXoJHLQfQosHkqIpD3pn6zwhXq5m-q1o9pJJffdUuwL93fWZ\/exec",
+    "google_sheet_url": "",
+    "hospital_name": "โรงพยาบาลเชียงแสน",
+    "hospital_subtitle": "Chiang Saen Hospital · e-Donation",
+    "bank_name": "ธนาคารกรุงไทย · สาขาเชียงแสน",
+    "account_name": "เงินบริจาค โรงพยาบาลเชียงแสน",
+    "account_number": "546-0-34327-5",
+    "hospital_phone": "053-777-017 ต่อ 133(ในเวลาราชการ) ต่อ 156(นอกเวลาราชการ)",
+    "hospital_address": "104 หมู่ 6 ต.เวียง อ.เชียงแสน จ.เชียงราย 57150",
+    "qr_image": "images\/donation-qr.jpg",
+    "logo_image": "images\/hospital.png"
+}

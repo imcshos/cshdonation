@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 620" width="100%" height="100%">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c3823" />
+      <stop offset="100%" stop-color="#1a5c3a" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f8fcf9" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.12" flood-color="#1a5c3a" />
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect x="15" y="15" width="470" height="590" rx="28" fill="url(#cardGrad)" stroke="#cbe5d8" stroke-width="2" filter="url(#shadow)" />
+
+  <!-- Card Top Banner -->
+  <path d="M 15 43 Q 15 15 43 15 L 457 15 Q 485 15 485 43 L 485 110 L 15 110 Z" fill="url(#headerGrad)" />
+
+  <!-- Hospital Tag -->
+  <circle cx="55" cy="62" r="24" fill="#ffffff" />
+  <text x="55" y="70" font-family="'Kanit', sans-serif" font-size="24" font-weight="bold" fill="#1a5c3a" text-anchor="middle">🏥</text>
+
+  <text x="92" y="55" font-family="'Kanit', sans-serif" font-size="20" font-weight="700" fill="#ffffff">โรงพยาบาลเชียงแสน</text>
+  <text x="92" y="77" font-family="'Sarabun', sans-serif" font-size="13" font-weight="500" fill="#e8d5a3">ระบบบริจาคอิเล็กทรอนิกส์ (e-Donation)</text>
+  <text x="92" y="94" font-family="'Sarabun', sans-serif" font-size="11" fill="#c4dfd2">ลดหย่อนภาษีได้ 2 เท่า ข้อมูลส่งตรงกรมสรรพากร</text>
+
+  <!-- Thai QR Payment / PromptPay Badge -->
+  <rect x="165" y="125" width="170" height="34" rx="8" fill="#003d6b" />
+  <text x="250" y="147" font-family="'Kanit', sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">THAI QR PAYMENT</text>
+
+  <!-- QR Code Frame -->
+  <rect x="65" y="175" width="370" height="340" rx="16" fill="#ffffff" stroke="#e0ece6" stroke-width="1.5" />
+
+  <!-- Simulated QR Pattern (High detail vector grid) -->
+  <!-- Top-Left Finder Pattern -->
+  <rect x="95" y="205" width="68" height="68" fill="#1a5c3a" rx="10" />
+  <rect x="107" y="217" width="44" height="44" fill="#ffffff" rx="6" />
+  <rect x="117" y="227" width="24" height="24" fill="#1a5c3a" rx="3" />
+
+  <!-- Top-Right Finder Pattern -->
+  <rect x="337" y="205" width="68" height="68" fill="#1a5c3a" rx="10" />
+  <rect x="349" y="217" width="44" height="44" fill="#ffffff" rx="6" />
+  <rect x="359" y="227" width="24" height="24" fill="#1a5c3a" rx="3" />
+
+  <!-- Bottom-Left Finder Pattern -->
+  <rect x="95" y="420" width="68" height="68" fill="#1a5c3a" rx="10" />
+  <rect x="107" y="432" width="44" height="44" fill="#ffffff" rx="6" />
+  <rect x="117" y="442" width="24" height="24" fill="#1a5c3a" rx="3" />
+
+  <!-- Center Decorative Hospital Cross Badge -->
+  <circle cx="250" cy="345" r="38" fill="#ffffff" stroke="#1a5c3a" stroke-width="3" />
+  <rect x="242" y="323" width="16" height="44" rx="3" fill="#2d7a52" />
+  <rect x="228" y="337" width="44" height="16" rx="3" fill="#2d7a52" />
+
+  <!-- QR Dots -->
+  <g fill="#243342">
+    <!-- Row 1 modules -->
+    <rect x="180" y="205" width="12" height="12" rx="2" />
+    <rect x="200" y="205" width="12" height="12" rx="2" />
+    <rect x="220" y="205" width="12" height="12" rx="2" />
+    <rect x="268" y="205" width="12" height="12" rx="2" />
+    <rect x="288" y="205" width="12" height="12" rx="2" />
+    <rect x="308" y="205" width="12" height="12" rx="2" />
+
+    <rect x="180" y="225" width="12" height="12" rx="2" />
+    <rect x="240" y="225" width="12" height="12" rx="2" />
+    <rect x="288" y="225" width="12" height="12" rx="2" />
+
+    <rect x="180" y="245" width="12" height="12" rx="2" />
+    <rect x="220" y="245" width="12" height="12" rx="2" />
+    <rect x="268" y="245" width="12" height="12" rx="2" />
+    <rect x="308" y="245" width="12" height="12" rx="2" />
+
+    <rect x="95" y="295" width="12" height="12" rx="2" />
+    <rect x="115" y="295" width="12" height="12" rx="2" />
+    <rect x="155" y="295" width="12" height="12" rx="2" />
+    <rect x="175" y="295" width="12" height="12" rx="2" />
+    <rect x="315" y="295" width="12" height="12" rx="2" />
+    <rect x="335" y="295" width="12" height="12" rx="2" />
+    <rect x="375" y="295" width="12" height="12" rx="2" />
+    <rect x="395" y="295" width="12" height="12" rx="2" />
+
+    <rect x="95" y="325" width="12" height="12" rx="2" />
+    <rect x="135" y="325" width="12" height="12" rx="2" />
+    <rect x="155" y="325" width="12" height="12" rx="2" />
+    <rect x="335" y="325" width="12" height="12" rx="2" />
+    <rect x="355" y="325" width="12" height="12" rx="2" />
+    <rect x="395" y="325" width="12" height="12" rx="2" />
+
+    <rect x="95" y="355" width="12" height="12" rx="2" />
+    <rect x="115" y="355" width="12" height="12" rx="2" />
+    <rect x="155" y="355" width="12" height="12" rx="2" />
+    <rect x="335" y="355" width="12" height="12" rx="2" />
+    <rect x="375" y="355" width="12" height="12" rx="2" />
+    <rect x="395" y="355" width="12" height="12" rx="2" />
+
+    <rect x="95" y="385" width="12" height="12" rx="2" />
+    <rect x="135" y="385" width="12" height="12" rx="2" />
+    <rect x="175" y="385" width="12" height="12" rx="2" />
+    <rect x="315" y="385" width="12" height="12" rx="2" />
+    <rect x="355" y="385" width="12" height="12" rx="2" />
+    <rect x="395" y="385" width="12" height="12" rx="2" />
+
+    <rect x="180" y="420" width="12" height="12" rx="2" />
+    <rect x="220" y="420" width="12" height="12" rx="2" />
+    <rect x="240" y="420" width="12" height="12" rx="2" />
+    <rect x="280" y="420" width="12" height="12" rx="2" />
+    <rect x="320" y="420" width="12" height="12" rx="2" />
+    <rect x="360" y="420" width="12" height="12" rx="2" />
+
+    <rect x="180" y="445" width="12" height="12" rx="2" />
+    <rect x="200" y="445" width="12" height="12" rx="2" />
+    <rect x="260" y="445" width="12" height="12" rx="2" />
+    <rect x="300" y="445" width="12" height="12" rx="2" />
+    <rect x="340" y="445" width="12" height="12" rx="2" />
+    <rect x="380" y="445" width="12" height="12" rx="2" />
+
+    <rect x="180" y="470" width="12" height="12" rx="2" />
+    <rect x="220" y="470" width="12" height="12" rx="2" />
+    <rect x="260" y="470" width="12" height="12" rx="2" />
+    <rect x="280" y="470" width="12" height="12" rx="2" />
+    <rect x="320" y="470" width="12" height="12" rx="2" />
+    <rect x="360" y="470" width="12" height="12" rx="2" />
+  </g>
+
+  <!-- Bottom Account Details -->
+  <text x="250" y="545" font-family="'Kanit', sans-serif" font-size="18" font-weight="600" fill="#1a5c3a" text-anchor="middle">ชื่อบัญชี: เงินบริจาคโรงพยาบาลเชียงแสน</text>
+  <text x="250" y="572" font-family="'Sarabun', sans-serif" font-size="14" fill="#586b72" text-anchor="middle">สแกนผ่าน Mobile Banking ได้ทุกธนาคาร</text>
+  <text x="250" y="593" font-family="'Sarabun', sans-serif" font-size="12" fill="#2d7a52" font-weight="600" text-anchor="middle">✨ สามารถใช้สิทธิ์ลดหย่อนภาษีได้ 2 เท่า</text>
+</svg>
+
