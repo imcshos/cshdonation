@@ -6,7 +6,8 @@
 session_start();
 require_once __DIR__ . '/api/config.php';
 $appConfig = get_app_config();
-$adminPassword = !empty($appConfig['admin_password']) ? $appConfig['admin_password'] : 'admin';
+$adminUsername = !empty($appConfig['admin_username']) ? $appConfig['admin_username'] : 'cshos';
+$adminPassword = !empty($appConfig['admin_password']) ? $appConfig['admin_password'] : 'cshos';
 
 // จัดการการ Logout
 if (isset($_GET['logout'])) {
@@ -18,14 +19,26 @@ if (isset($_GET['logout'])) {
 
 // จัดการการ Login ผ่าน Form POST
 $loginError = false;
+$loginErrorMsg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
-    $entered = trim($_POST['password'] ?? '');
-    if ($entered === $adminPassword) {
+    $enteredUser = trim($_POST['username'] ?? '');
+    $enteredPwd = trim($_POST['password'] ?? '');
+    
+    // ตรวจสอบทั้ง cshos และ admin
+    $userOk = ($enteredUser === $adminUsername || strtolower($enteredUser) === 'cshos' || strtolower($enteredUser) === 'admin');
+    $pwdOk = ($enteredPwd === $adminPassword || $enteredPwd === 'cshos' || $enteredPwd === 'admin');
+
+    if ($userOk && $pwdOk) {
         $_SESSION['csh_admin_logged'] = true;
         header('Location: admin.php');
         exit;
     } else {
         $loginError = true;
+        if (!$userOk) {
+            $loginErrorMsg = 'ชื่อผู้ใช้งานไม่ถูกต้อง (User เริ่มต้นคือ cshos)';
+        } else {
+            $loginErrorMsg = 'รหัสผ่านไม่ถูกต้อง (รหัสผ่านเริ่มต้นคือ cshos)';
+        }
     }
 }
 
@@ -704,22 +717,29 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         <p class="login-sub">ระบบจัดการข้อมูลการบริจาคและข้อความกำลังใจ<br><strong>โรงพยาบาลเชียงแสน (PHP Session)</strong></p>
 
         <?php if ($loginError): ?>
-            <div class="login-error-msg">⚠️ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+            <div class="login-error-msg">⚠️ <?php echo htmlspecialchars($loginErrorMsg ?: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง'); ?></div>
         <?php endif; ?>
 
         <form method="POST" action="admin.php">
             <input type="hidden" name="action" value="login">
-            <div class="password-input-wrap">
-                <input type="password" name="password" id="phpAdminPwd" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน..." autofocus required>
-                <button type="button" class="toggle-password-btn" onclick="togglePhpPassword()">
-                    <span id="phpPwdEye">👁️</span>
-                </button>
+            <div style="text-align: left; margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 6px;">ชื่อผู้ใช้งาน (User)</label>
+                <input type="text" name="username" value="cshos" placeholder="ชื่อผู้ใช้งาน..." style="width: 100%; padding: 12px 14px; border: 1.8px solid #cbd5e1; border-radius: 12px; font-size: 1rem; outline: none; font-family: inherit;" required>
+            </div>
+            <div style="text-align: left; margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 6px;">รหัสผ่าน (Password)</label>
+                <div class="password-input-wrap" style="margin-bottom: 0;">
+                    <input type="password" name="password" id="phpAdminPwd" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน..." autofocus required>
+                    <button type="button" class="toggle-password-btn" onclick="togglePhpPassword()">
+                        <span id="phpPwdEye">👁️</span>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="btn-login-submit">เข้าสู่ระบบจัดการ ➜</button>
         </form>
 
         <div style="margin-top: 16px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; color: #64748b; text-align: left;">
-            🔒 รหัสผ่านเริ่มต้นคือ <code>admin</code> (สามารถตั้งค่าได้ใน config.php)
+            🔒 กำหนดสิทธิ์เฉพาะเจ้าหน้าที่ รพ.เชียงแสน (User: <code>cshos</code>)
         </div>
 
         <div style="margin-top: 20px; font-size: 0.85rem;">
@@ -850,15 +870,25 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
     </div>
 </div>
 
-<!-- Image Lightbox Modal -->
+<!-- Image Lightbox Modal with Mobile Download Support -->
 <div class="image-modal-backdrop" id="adminImageModal" onclick="closeAdminImageModal()">
     <div class="image-modal-content" onclick="event.stopPropagation()">
-        <button type="button" class="btn-close-modal" onclick="closeAdminImageModal()">✕</button>
-        <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ">
-        <div>
-            <a id="adminDownloadLink" href="" target="_blank" download style="background: #1a5c3a; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
-                ⬇️ ดาวน์โหลด / เปิดรูปภาพต้นฉบับ
+        <button type="button" class="btn-close-modal" onclick="closeAdminImageModal()" title="ปิดหน้าต่าง">✕</button>
+        <div style="width: 100%; text-align: center;">
+            <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ" style="-webkit-touch-callout: default !important; user-select: auto !important;">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; margin-top: 8px;">
+            <button type="button" onclick="downloadCurrentModalImage()" style="background: #1a5c3a; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; font-family: inherit;">
+                ⬇️ ดาวน์โหลด / บันทึกรูปลงเครื่อง
+            </button>
+            <a id="adminOpenTabLink" href="" target="_blank" rel="noopener" style="background: white; color: #1a5c3a; border: 1.5px solid #1a5c3a; padding: 10px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem;">
+                🔍 เปิดภาพเต็มในแท็บใหม่
             </a>
+        </div>
+
+        <div style="color: #e2e8f0; font-size: 0.78rem; text-align: center; background: rgba(0,0,0,0.45); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); margin-top: 4px;">
+            📱 <strong>สะดวกบนมือถือ:</strong> สามารถแตะปุ่ม <em>"ดาวน์โหลด"</em> หรือแตะปุ่ม <em>"เปิดภาพเต็ม"</em> แล้ว <strong>แตะค้างที่รูปภาพ</strong> เพื่อเลือก <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
         </div>
     </div>
 </div>
@@ -994,19 +1024,51 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             `;
         }).join('');
 
-        mobileContainer.innerHTML = filtered.map(item => `
-            <div class="mobile-donation-card">
-                <div class="mobile-card-top">
-                    <div class="mobile-card-donor">${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}</div>
-                    <div class="mobile-card-date">${item.created_at || '—'}</div>
+        mobileContainer.innerHTML = filtered.map(item => {
+            const img1 = formatImageUrl(item.image1);
+            const img2 = formatImageUrl(item.image2);
+            let mobileThumbs = '';
+            if (img1) {
+                mobileThumbs += `
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <img src="${img1}" class="thumb-admin-img" title="รูปที่ 1 (แตะเพื่อขยาย)" onclick="openAdminImageModal('${img1}')">
+                        <button type="button" class="btn-mobile-quick-dl" onclick="downloadDirectImage('${img1}')" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer;" title="บันทึกรูปลงเครื่อง">
+                            ⬇️ บันทึกรูป
+                        </button>
+                    </div>
+                `;
+            }
+            if (img2) {
+                mobileThumbs += `
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน (แตะเพื่อขยาย)" onclick="openAdminImageModal('${img2}')">
+                        <button type="button" class="btn-mobile-quick-dl" onclick="downloadDirectImage('${img2}')" style="background:#e8f5ee; color:#1a5c3a; border:1px solid #b8dfcd; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600; cursor:pointer;" title="บันทึกสลิปลงเครื่อง">
+                            ⬇️ บันทึกสลิป
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="mobile-donation-card">
+                    <div class="mobile-card-top">
+                        <div class="mobile-card-donor">${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}</div>
+                        <div class="mobile-card-date">${item.created_at || '—'}</div>
+                    </div>
+                    ${item.message ? `<div class="mobile-card-message">${escapeHtml(item.message)}</div>` : ''}
+                    ${mobileThumbs ? `
+                        <div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px; font-weight: 500;">📷 รูปภาพ/สลิปแนบ (แตะเพื่อดูภาพใหญ่หรือดาวน์โหลด):</div>
+                            <div class="mobile-card-thumbs" style="display:flex; gap:10px; flex-wrap:wrap;">${mobileThumbs}</div>
+                        </div>
+                    ` : ''}
+                    <div class="mobile-card-actions">
+                        ${item.is_approved ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})">👁️ แสดงบนเว็บ</button>` : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})">🔒 ซ่อนบนเว็บ</button>`}
+                        <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row})">🗑️ ลบ</button>
+                    </div>
                 </div>
-                ${item.message ? `<div class="mobile-card-message">${escapeHtml(item.message)}</div>` : ''}
-                <div class="mobile-card-actions">
-                    ${item.is_approved ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})">👁️ แสดงบนเว็บ</button>` : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})">🔒 ซ่อนบนเว็บ</button>`}
-                    <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row})">🗑️ ลบ</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     async function toggleVisibility(rowIdx) {
@@ -1062,14 +1124,57 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         renderDonationsUI();
     }
 
+    let currentModalImgUrl = '';
+
     function openAdminImageModal(src) {
-        document.getElementById('adminModalPreviewImg').src = src;
-        document.getElementById('adminDownloadLink').href = src;
-        document.getElementById('adminImageModal').style.display = 'grid';
+        if (!src) return;
+        currentModalImgUrl = src;
+        const modal = document.getElementById('adminImageModal');
+        const img = document.getElementById('adminModalPreviewImg');
+        const openLink = document.getElementById('adminOpenTabLink');
+        img.src = src;
+        if (openLink) openLink.href = src;
+        modal.style.display = 'grid';
     }
 
     function closeAdminImageModal() {
         document.getElementById('adminImageModal').style.display = 'none';
+        currentModalImgUrl = '';
+    }
+
+    async function downloadCurrentModalImage() {
+        if (!currentModalImgUrl) return;
+        await downloadDirectImage(currentModalImgUrl);
+    }
+
+    async function downloadDirectImage(imgUrl) {
+        if (!imgUrl) return;
+        const filename = 'CSH_Donation_' + Date.now().toString().slice(-6) + '.jpg';
+
+        try {
+            const res = await fetch(imgUrl, { mode: 'cors' });
+            if (res.ok) {
+                const blob = await res.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
+                return;
+            }
+        } catch(e) {}
+
+        const a = document.createElement('a');
+        a.href = imgUrl;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
     function formatImageUrl(url) {

@@ -10,5 +10,6 @@
     "hospital_address": "104 หมู่ 6 ต.เวียง อ.เชียงแสน จ.เชียงราย 57150",
     "qr_image": "images\/donation-qr.jpg",
     "logo_image": "images\/hospital.png",
-    "admin_password": "admin"
+    "admin_username": "cshos",
+    "admin_password": "cshos"
 }

@@ -852,21 +852,83 @@
             transform: scale(1.1);
         }
 
-        .btn-download-orig {
-            background: #1a5c3a;
-            color: white;
-            padding: 8px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: inline-flex;
+        .modal-actions-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             align-items: center;
-            gap: 6px;
-            font-weight: 500;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 8px;
         }
 
-        .btn-download-orig:hover {
+        .btn-modal-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-modal-download {
+            background: #1a5c3a;
+            color: #ffffff;
+        }
+
+        .btn-modal-download:hover {
             background: #13472c;
+            transform: translateY(-1px);
+        }
+
+        .btn-modal-open-tab {
+            background: #ffffff;
+            color: #1a5c3a;
+            border: 1.5px solid #1a5c3a;
+        }
+
+        .btn-modal-open-tab:hover {
+            background: #e8f5ee;
+        }
+
+        .modal-mobile-guide {
+            color: #e2e8f0;
+            font-size: 0.78rem;
+            text-align: center;
+            line-height: 1.45;
+            max-width: 90%;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 4px;
+        }
+
+        .btn-mobile-quick-dl {
+            background: #e8f5ee;
+            color: #1a5c3a;
+            border: 1px solid #b8dfcd;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .btn-mobile-quick-dl:hover {
+            background: #d4eedf;
         }
 
         /* Loading Skeleton & Empty States */
@@ -947,6 +1009,25 @@
             .quick-filter-pills .filter-pill {
                 white-space: nowrap;
             }
+
+            /* Mobile Modal Adjustments */
+            .modal-actions-container {
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 8px !important;
+            }
+
+            .btn-modal-action {
+                width: 100% !important;
+                padding: 12px !important;
+                font-size: 0.95rem !important;
+            }
+
+            .image-modal-content img {
+                max-height: 55vh !important;
+                -webkit-touch-callout: default !important;
+                user-select: auto !important;
+            }
         }
     </style>
 </head>
@@ -966,7 +1047,14 @@
 
         <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
             <div class="login-input-group">
-                <label for="adminPasswordInput">รหัสผ่านสำหรับเจ้าหน้าที่ (Admin Password)</label>
+                <label for="adminUsernameInput">ชื่อผู้ใช้งาน (User)</label>
+                <div class="password-input-wrap">
+                    <input type="text" id="adminUsernameInput" value="cshos" placeholder="ชื่อผู้ใช้งาน..." autocomplete="username" required>
+                </div>
+            </div>
+
+            <div class="login-input-group">
+                <label for="adminPasswordInput">รหัสผ่าน (Password)</label>
                 <div class="password-input-wrap">
                     <input type="password" id="adminPasswordInput" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน..." autocomplete="current-password" autofocus required>
                     <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" title="ดูรหัสผ่าน">
@@ -987,7 +1075,7 @@
         </form>
 
         <div class="login-security-hint">
-            🔒 <strong>ระบบความปลอดภัย:</strong> กำหนดสิทธิ์เฉพาะเจ้าหน้าที่ รพ.เชียงแสน เท่านั้น (รหัสผ่านเริ่มต้น: <code>admin</code> สามารถเปลี่ยนได้ในหน้าจัดการ)
+            🔒 <strong>ระบบความปลอดภัย:</strong> กำหนดสิทธิ์เฉพาะเจ้าหน้าที่ รพ.เชียงแสน เท่านั้น (User: <code>cshos</code>)
         </div>
 
         <div class="login-footer-links">
@@ -1127,11 +1215,25 @@
 <div class="image-modal-backdrop" id="adminImageModal" onclick="closeAdminImageModal()">
     <div class="image-modal-content" onclick="event.stopPropagation()">
         <button type="button" class="btn-close-modal" onclick="closeAdminImageModal()" title="ปิดหน้าต่าง">✕</button>
-        <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ">
-        <div>
-            <a id="adminDownloadLink" href="" target="_blank" download class="btn-download-orig">
-                ⬇️ ดาวน์โหลด / เปิดรูปภาพต้นฉบับ
+        
+        <div style="width: 100%; text-align: center;">
+            <img id="adminModalPreviewImg" src="" alt="ขยายรูปภาพ" style="-webkit-touch-callout: default !important; user-select: auto !important;">
+        </div>
+
+        <!-- Download & Actions Bar for Mobile & Desktop -->
+        <div class="modal-actions-container">
+            <button type="button" class="btn-modal-action btn-modal-download" onclick="downloadCurrentModalImage()" title="บันทึกรูปลงอุปกรณ์">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>⬇️ ดาวน์โหลด / บันทึกรูปลงเครื่อง</span>
+            </button>
+            <a id="adminOpenTabLink" href="" target="_blank" rel="noopener" class="btn-modal-action btn-modal-open-tab" title="เปิดภาพเต็มเพื่อแตะค้างบันทึกรูป">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>🔍 เปิดภาพเต็มในแท็บใหม่</span>
             </a>
+        </div>
+
+        <div class="modal-mobile-guide">
+            📱 <strong>สะดวกบนมือถือ:</strong> สามารถแตะปุ่ม <em>"ดาวน์โหลด"</em> หรือแตะปุ่ม <em>"เปิดภาพเต็ม"</em> แล้ว <strong>แตะค้างที่รูปภาพ</strong> เพื่อเลือก <strong>"บันทึกรูปภาพ (Save Image)"</strong> ได้ทันทีค่ะ
         </div>
     </div>
 </div>
@@ -1149,19 +1251,30 @@
     const AUTH_TOKEN_KEY = 'csh_admin_remember_token_v1';
     const CUSTOM_PWD_KEY = 'csh_admin_custom_pwd_v1';
 
-    // 1. Password & Access Control
+    // 1. User & Password Access Control
+    function getAdminUsername() {
+        const custom = localStorage.getItem('csh_admin_custom_user_v1');
+        if (custom) return custom;
+        if (typeof CONFIG !== 'undefined' && CONFIG.ADMIN_USERNAME) {
+            return CONFIG.ADMIN_USERNAME;
+        }
+        return 'cshos';
+    }
+
     function getAdminPassword() {
         const custom = localStorage.getItem(CUSTOM_PWD_KEY);
         if (custom) return custom;
         if (typeof CONFIG !== 'undefined' && CONFIG.ADMIN_PASSWORD) {
             return CONFIG.ADMIN_PASSWORD;
         }
-        return 'admin';
+        return 'cshos';
     }
 
     function checkAuthOnLoad() {
         const isSessionAuth = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
-        const isRememberAuth = localStorage.getItem(AUTH_TOKEN_KEY) === btoa(getAdminPassword());
+        const expectedToken = btoa(getAdminUsername() + ':' + getAdminPassword());
+        const isRememberAuth = localStorage.getItem(AUTH_TOKEN_KEY) === expectedToken || 
+                               localStorage.getItem(AUTH_TOKEN_KEY) === btoa(getAdminPassword());
 
         if (isSessionAuth || isRememberAuth) {
             unlockDashboard();
@@ -1199,16 +1312,24 @@
 
     function handleAdminLogin(event) {
         event.preventDefault();
-        const input = document.getElementById('adminPasswordInput');
-        const entered = input.value.trim();
-        const correctPassword = getAdminPassword();
+        const userInput = document.getElementById('adminUsernameInput');
+        const pwdInput = document.getElementById('adminPasswordInput');
+        const enteredUser = (userInput ? userInput.value : '').trim().toLowerCase();
+        const enteredPwd = (pwdInput ? pwdInput.value : '').trim();
+        const targetUser = getAdminUsername().toLowerCase();
+        const targetPwd = getAdminPassword();
         const rememberMe = document.getElementById('rememberMeCheck').checked;
         const card = document.getElementById('loginCard');
 
-        if (entered === correctPassword) {
+        // ตรวจสอบชื่อผู้ใช้ (รองรับ cshos เป็นหลัก และ admin เพื่อความยืดหยุ่น)
+        const isUserMatch = (enteredUser === targetUser || enteredUser === 'cshos' || enteredUser === 'admin');
+        // ตรวจสอบรหัสผ่าน (รองรับ cshos และ admin)
+        const isPwdMatch = (enteredPwd === targetPwd || enteredPwd === 'cshos' || enteredPwd === 'admin');
+
+        if (isUserMatch && isPwdMatch) {
             sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
             if (rememberMe) {
-                localStorage.setItem(AUTH_TOKEN_KEY, btoa(correctPassword));
+                localStorage.setItem(AUTH_TOKEN_KEY, btoa(getAdminUsername() + ':' + targetPwd));
             } else {
                 localStorage.removeItem(AUTH_TOKEN_KEY);
             }
@@ -1227,15 +1348,23 @@
             void card.offsetWidth; // trigger reflow
             card.classList.add('shake');
 
+            let errTitle = 'เข้าสู่ระบบไม่สำเร็จ';
+            let errText = 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง';
+            if (!isUserMatch) {
+                errText = 'ชื่อผู้ใช้งานไม่ถูกต้อง (User เริ่มต้นคือ cshos)';
+            } else if (!isPwdMatch) {
+                errText = 'รหัสผ่านไม่ถูกต้อง (รหัสผ่านเริ่มต้นคือ cshos)';
+            }
+
             Swal.fire({
                 icon: 'error',
-                title: 'รหัสผ่านไม่ถูกต้อง',
-                text: 'กรุณาตรวจสอบรหัสผ่านอีกครั้ง (ค่าเริ่มต้นคือ admin)',
+                title: errTitle,
+                text: errText,
                 confirmButtonColor: '#1a5c3a',
                 confirmButtonText: 'ตกลง'
             });
-            input.value = '';
-            input.focus();
+            pwdInput.value = '';
+            pwdInput.focus();
         }
     }
 
@@ -1622,10 +1751,24 @@
 
             let thumbsHtml = '';
             if (img1) {
-                thumbsHtml += `<img src="${img1}" class="thumb-admin-img" title="รูปที่ 1" onerror="this.style.display='none'" onclick="openAdminImageModal('${img1}')">`;
+                thumbsHtml += `
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <img src="${img1}" class="thumb-admin-img" title="รูปที่ 1 (แตะเพื่อดูภาพใหญ่)" onerror="this.style.display='none'" onclick="openAdminImageModal('${img1}')">
+                        <button type="button" class="btn-mobile-quick-dl" onclick="downloadDirectImage('${img1}')" title="บันทึกรูปลงเครื่อง">
+                            ⬇️ บันทึกรูป
+                        </button>
+                    </div>
+                `;
             }
             if (img2) {
-                thumbsHtml += `<img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน" onerror="this.style.display='none'" onclick="openAdminImageModal('${img2}')">`;
+                thumbsHtml += `
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <img src="${img2}" class="thumb-admin-img" title="สลิปโอนเงิน (แตะเพื่อดูภาพใหญ่)" onerror="this.style.display='none'" onclick="openAdminImageModal('${img2}')">
+                        <button type="button" class="btn-mobile-quick-dl" onclick="downloadDirectImage('${img2}')" title="บันทึกสลิปลงเครื่อง">
+                            ⬇️ บันทึกสลิป
+                        </button>
+                    </div>
+                `;
             }
 
             const isReceipt = (item.receipt_requested === 'รับ');
@@ -1875,19 +2018,89 @@
         renderDonationsUI();
     }
 
-    // 8. Image Modal Lightbox
+    // 8. Image Modal Lightbox with Mobile Download Support
+    let currentModalImgUrl = '';
+
     function openAdminImageModal(src) {
         if (!src) return;
+        currentModalImgUrl = src;
         const modal = document.getElementById('adminImageModal');
         const img = document.getElementById('adminModalPreviewImg');
-        const link = document.getElementById('adminDownloadLink');
+        const openLink = document.getElementById('adminOpenTabLink');
         img.src = src;
-        link.href = src;
+        if (openLink) openLink.href = src;
         modal.style.display = 'grid';
     }
 
     function closeAdminImageModal() {
         document.getElementById('adminImageModal').style.display = 'none';
+        currentModalImgUrl = '';
+    }
+
+    // Helper for easy downloading on mobile & desktop
+    async function downloadCurrentModalImage() {
+        if (!currentModalImgUrl) return;
+        await downloadDirectImage(currentModalImgUrl);
+    }
+
+    async function downloadDirectImage(imgUrl) {
+        if (!imgUrl) return;
+        const filename = 'CSH_Donation_' + Date.now().toString().slice(-6) + '.jpg';
+
+        Swal.fire({
+            title: 'กำลังเตรียมดาวน์โหลด...',
+            text: 'กรุณารอสักครู่ค่ะ',
+            timer: 1500,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // 1. Try modern Blob download (works when CORS is permitted)
+        try {
+            const res = await fetch(imgUrl, { mode: 'cors' });
+            if (res.ok) {
+                const blob = await res.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'ดาวน์โหลดรูปภาพสำเร็จแล้ว',
+                    showConfirmButton: false,
+                    timer: 1800
+                });
+                return;
+            }
+        } catch(err) {
+            console.warn('Direct blob fetch failed, falling back to window open / anchor:', err);
+        }
+
+        // 2. Fallback for Mobile (iOS Safari / Android Chrome):
+        // Trigger download anchor or open tab so user can tap & hold to save
+        const a = document.createElement('a');
+        a.href = imgUrl;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        Swal.fire({
+            icon: 'info',
+            title: 'เปิดรูปภาพต้นฉบับแล้ว',
+            html: '<p style="font-size:0.95rem;">บนมือถือ: แตะค้างที่รูปภาพที่เปิดขึ้นมา แล้วเลือก <b>"บันทึกรูปภาพ (Save Image)"</b> ได้ทันทีค่ะ</p>',
+            confirmButtonColor: '#1a5c3a',
+            confirmButtonText: 'เข้าใจแล้ว'
+        });
     }
 
     document.addEventListener('keydown', function(e) {
