@@ -991,6 +991,12 @@ $config = get_app_config();
     <footer class="donation-page-footer">
         <p><strong>ด้วยความขอบคุณจาก <?php echo htmlspecialchars($config['hospital_name']); ?></strong></p>
         <p><?php echo htmlspecialchars($config['hospital_address']); ?> · โทร: <?php echo htmlspecialchars($config['hospital_phone']); ?></p>
+        <div class="footer-admin-link-wrapper" style="margin-top: 12px;">
+            <a href="admin.php" class="btn-bottom-admin" style="background: #ffffff; color: #1a5c3a; border: 1.2px solid #b7dfcc; font-weight: 600;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                จัดการ ADMIN
+            </a>
+        </div>
     </footer>
 
 </div>
