@@ -795,18 +795,6 @@ $config = get_app_config();
                 <small><?php echo htmlspecialchars($config['hospital_subtitle']); ?></small>
             </div>
         </div>
-        <div class="header-actions">
-            <a href="admin.php" class="btn-sheet-link" title="จัดการข้อมูลบริจาค (Admin)">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <span>จัดการ (Admin)</span>
-            </a>
-            <?php if (!empty($config['google_sheet_url'])): ?>
-                <a href="<?php echo htmlspecialchars($config['google_sheet_url']); ?>" target="_blank" rel="noopener" class="btn-sheet-link" title="เปิดดู Google Sheet">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    <span>Google Sheet</span>
-                </a>
-            <?php endif; ?>
-        </div>
     </header>
 
     <!-- Intro Announcement Card -->
@@ -999,49 +987,10 @@ $config = get_app_config();
         </form>
     </div>
 
-    <!-- Wall of Kindness (กระดานข้อความความปรารถนาดี) -->
-    <div class="glass-panel kindness-board-panel" id="kindnessBoardPanel">
-        <div class="kindness-board-header">
-            <div>
-                <h3 class="font-kanit" style="font-size: 1.25rem; color: var(--teal); margin-bottom: 2px;">
-                    ข้อความแห่งน้ำใจและการแบ่งปัน
-                </h3>
-                <small style="color: var(--muted);">คำอวยพรและกำลังใจจากผู้มีจิตศรัทธาที่ร่วมบริจาค</small>
-            </div>
-            <button type="button" onclick="loadWishes()" style="background: none; border: none; color: var(--teal); cursor: pointer; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                รีเฟรช
-            </button>
-        </div>
-        <div class="wishes-masonry" id="wishesContainer">
-            <!-- Loaded dynamically via JavaScript -->
-            <div style="grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 24px 0;">
-                กำลังโหลดข้อความ...
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer of the Page & Admin Management -->
+    <!-- Footer of the Page -->
     <footer class="donation-page-footer">
         <p><strong>ด้วยความขอบคุณจาก <?php echo htmlspecialchars($config['hospital_name']); ?></strong></p>
         <p><?php echo htmlspecialchars($config['hospital_address']); ?> · โทร: <?php echo htmlspecialchars($config['hospital_phone']); ?></p>
-        
-        <div class="footer-admin-link-wrapper">
-            <a href="admin.php" class="btn-bottom-admin" style="background: #1a5c3a; color: white; border-color: #1a5c3a; font-weight: 600;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                จัดการข้อมูลการบริจาค (Admin)
-            </a>
-            <button type="button" class="btn-bottom-admin" onclick="openConfigModal()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                ตั้งค่า Google Sheet / สถานะระบบ
-            </button>
-            <?php if (!empty($config['google_sheet_url'])): ?>
-                <a href="<?php echo htmlspecialchars($config['google_sheet_url']); ?>" target="_blank" rel="noopener" class="btn-bottom-admin">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    เปิดดูฐานข้อมูล Google Sheet
-                </a>
-            <?php endif; ?>
-        </div>
     </footer>
 
 </div>
@@ -1519,6 +1468,7 @@ $config = get_app_config();
     // Load Recent Wishes (ข้อความความปรารถนาดี)
     async function loadWishes() {
         const container = document.getElementById('wishesContainer');
+        if (!container) return;
         try {
             const res = await fetch('api/get_wishes.php');
             const data = await res.json();
