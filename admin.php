@@ -775,96 +775,271 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             border-color: #fca5a5;
         }
 
+        /* View Mode Switcher Bar */
+        .view-mode-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 4px 2px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .view-mode-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-mode-title small {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: normal;
+        }
+
+        .view-mode-switch {
+            display: inline-flex;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 10px;
+            gap: 3px;
+        }
+
+        .btn-view-pill {
+            background: transparent;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view-pill.active {
+            background: #ffffff;
+            color: #166534;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile Table Scroll Hint */
+        .mobile-table-hint {
+            display: none;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px dashed #86efac;
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
         /* Mobile Cards View */
         .mobile-cards-view {
-            display: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .mobile-donation-card {
             background: #ffffff;
-            border: 1px solid #e3ede8;
-            border-radius: 14px;
-            padding: 14px 12px;
-            box-shadow: 0 2px 8px rgba(26, 92, 58, 0.04);
+            border: 1px solid #e2ece7;
+            border-radius: 16px;
+            padding: 14px 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
             gap: 10px;
+            transition: all 0.2s;
         }
 
-        .mobile-card-top {
+        .mobile-donation-card:hover {
+            border-color: #cbdad3;
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.06);
+        }
+
+        /* Card Top Header */
+        .m-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 10px;
             border-bottom: 1px solid #f1f5f3;
-            padding-bottom: 8px;
-            gap: 8px;
+            padding-bottom: 10px;
         }
 
-        .mobile-card-donor {
-            font-size: 1.02rem;
-            font-weight: 600;
-            color: #1a5c3a;
+        .m-donor-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #166534;
             font-family: 'Kanit', sans-serif;
             line-height: 1.3;
         }
 
-        .mobile-card-date {
+        .m-donor-date {
             font-size: 0.76rem;
             color: #64748b;
-            white-space: nowrap;
-            flex-shrink: 0;
+            margin-top: 3px;
         }
 
-        .mobile-card-message {
-            background: #fbfdfc;
-            border: 1px solid #ebf3ef;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.88rem;
+        /* Badges Row */
+        .m-card-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .m-badge {
+            font-size: 0.74rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .m-badge-receipt-yes { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .m-badge-receipt-no { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+        .m-badge-social-yes { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .m-badge-social-no { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+
+        /* Message Box */
+        .m-card-message {
+            background: #f8fafc;
+            border-left: 3px solid #166534;
+            border-radius: 4px 10px 10px 4px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
             color: #334155;
-            line-height: 1.55;
-            white-space: pre-wrap;
+            line-height: 1.5;
             word-break: break-word;
         }
 
-        .mobile-tax-box {
+        /* Structured Key-Value Data Sheet */
+        .m-data-sheet {
+            background: #fbfdfc;
+            border: 1px solid #e6f0eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .m-data-sheet-title {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .m-data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 0.82rem;
+            gap: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #edf4f0;
+        }
+
+        .m-data-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .m-data-label {
+            color: #64748b;
+            font-size: 0.78rem;
+            flex-shrink: 0;
+        }
+
+        .m-data-value {
+            color: #1e293b;
+            font-weight: 500;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .m-code-tax {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .m-tel-link {
+            color: #0369a1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Media Box on Mobile */
+        .m-media-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 9px 11px;
-            font-size: 0.8rem;
-            display: grid;
-            gap: 5px;
+            border-radius: 12px;
+            padding: 10px 12px;
         }
 
-        .mobile-card-thumbs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .mobile-card-thumbs .thumb-admin-img {
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            border: 1.5px solid #d4dfd9;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-        }
-
-        .mobile-card-thumbs .thumb-admin-img:active {
-            transform: scale(0.96);
-            border-color: #1a5c3a;
-        }
-
-        .mobile-card-actions {
+        .m-media-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #f1f5f3;
-            padding-top: 8px;
+            margin-bottom: 8px;
             gap: 8px;
             flex-wrap: wrap;
+        }
+
+        .m-media-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .m-media-thumbs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .m-media-thumbs .thumb-admin-img {
+            width: 76px;
+            height: 76px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            object-fit: cover;
+        }
+
+        /* Card Actions Footer */
+        .m-card-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-top: 1px solid #f1f5f3;
+            padding-top: 10px;
+            gap: 8px;
         }
 
         /* Loading Skeleton & Empty States */
@@ -897,14 +1072,41 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
            RESPONSIVE BREAKPOINTS (COMPUTER & MOBILE FIT)
            ========================================================================== */
         @media (max-width: 992px) {
-            .desktop-table-view {
-                display: none !important;
+            .mobile-table-hint {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
             }
 
-            .mobile-cards-view {
-                display: flex !important;
-                flex-direction: column;
-                gap: 12px;
+            .desktop-table-view {
+                border-radius: 12px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            table.admin-donation-table {
+                min-width: 1040px;
+            }
+
+            table.admin-donation-table th,
+            table.admin-donation-table td {
+                padding: 9px 8px !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* Sticky Donor Column on Mobile Table */
+            table.admin-donation-table th:nth-child(2),
+            table.admin-donation-table td:nth-child(2) {
+                position: sticky;
+                left: 0;
+                background: #ffffff;
+                z-index: 2;
+                box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.08);
+            }
+
+            table.admin-donation-table th:nth-child(2) {
+                background: #f4faf6;
+                z-index: 4;
             }
 
             .admin-wrapper {
@@ -1210,8 +1412,25 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             </div>
         </div>
 
+        <!-- View Mode Switcher Bar -->
+        <div class="view-mode-bar">
+            <div class="view-mode-title">
+                <span>📋 รายการข้อมูลบริจาค</span>
+                <small id="filteredCountLabel">(กำลังโหลด...)</small>
+            </div>
+            <div class="view-mode-switch">
+                <button type="button" id="btnViewCard" class="btn-view-pill active" onclick="switchViewMode('card')" title="แสดงแบบการ์ด">
+                    🗂️ การ์ด
+                </button>
+                <button type="button" id="btnViewTable" class="btn-view-pill" onclick="switchViewMode('table')" title="แสดงแบบตาราง">
+                    📋 ตาราง
+                </button>
+            </div>
+        </div>
+
         <!-- Desktop Table View -->
         <div class="desktop-table-view">
+            <div class="mobile-table-hint">↔️ เลื่อนตารางแนวนอน เพื่อดูข้อมูลครบทุกคอลัมน์</div>
             <table class="admin-donation-table">
                 <thead>
                     <tr>
@@ -1401,6 +1620,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             `;
         }).join('');
 
+        // 2. Mobile Cards (Table-Card Structured View)
         mobileContainer.innerHTML = filtered.map(item => {
             const img1 = formatImageUrl(item.image1);
             const img2 = formatImageUrl(item.image2);
@@ -1420,31 +1640,100 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
                 `;
             }
 
+            const isReceipt = (item.receipt_requested === 'รับ');
+            const statusBtn = item.is_approved
+                ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})" title="คลิกเพื่อสลับเป็น ซ่อน">👁️ แสดงบนเว็บ</button>`
+                : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})" title="คลิกเพื่อสลับเป็น แสดง">🔒 ซ่อนบนเว็บ</button>`;
+
+            const hasTaxInfo = item.tax_name || item.tax_id || item.phone || item.address || isReceipt;
+
             return `
-                <div class="mobile-donation-card">
-                    <div class="mobile-card-top">
-                        <div class="mobile-card-donor">${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}</div>
-                        <div class="mobile-card-date">${item.created_at || '—'}</div>
+                <div class="mobile-donation-card" data-row="${item.row}">
+                    <!-- Card Top Header -->
+                    <div class="m-card-header">
+                        <div>
+                            <div class="m-donor-name">${escapeHtml(item.donor_name || 'ผู้ไม่ประสงค์ออกนาม')}</div>
+                            <div class="m-donor-date">📅 ${formatShortDate(item.created_at)}</div>
+                        </div>
+                        <div>${statusBtn}</div>
                     </div>
-                    ${item.message ? `<div class="mobile-card-message">${escapeHtml(item.message)}</div>` : ''}
+
+                    <!-- Badges Row -->
+                    <div class="m-card-badges">
+                        <span class="m-badge ${isReceipt ? 'm-badge-receipt-yes' : 'm-badge-receipt-no'}">
+                            ${isReceipt ? '📄 ขอใบอนุโมทนาบัตร' : '⚪ ไม่รับใบอนุโมทนา'}
+                        </span>
+                        <span class="m-badge ${item.allow_social_post === 'อนุญาต' ? 'm-badge-social-yes' : 'm-badge-social-no'}">
+                            ${item.allow_social_post === 'อนุญาต' ? '📢 เผยแพร่บนเว็บ' : '🔒 ไม่อนุญาตเผยแพร่'}
+                        </span>
+                    </div>
+
+                    <!-- Message Bubble -->
+                    ${item.message ? `
+                        <div class="m-card-message">
+                            <strong>💬 ข้อความ:</strong> ${escapeHtml(item.message)}
+                        </div>
+                    ` : ''}
+
+                    <!-- Structured Data Sheet (ตารางข้อมูลย่อ) -->
+                    ${hasTaxInfo ? `
+                        <div class="m-data-sheet">
+                            <div class="m-data-sheet-title">📋 ข้อมูลลดหย่อนภาษี & ติดต่อ:</div>
+                            ${item.tax_name ? `
+                                <div class="m-data-row">
+                                    <span class="m-data-label">🏷️ ชื่อลดหย่อน:</span>
+                                    <span class="m-data-value"><strong>${escapeHtml(item.tax_name)}</strong></span>
+                                </div>
+                            ` : ''}
+                            ${item.tax_id ? `
+                                <div class="m-data-row">
+                                    <span class="m-data-label">🆔 เลขประจำตัว:</span>
+                                    <span class="m-data-value"><code class="m-code-tax">${escapeHtml(item.tax_id)}</code></span>
+                                </div>
+                            ` : ''}
+                            ${item.phone ? `
+                                <div class="m-data-row">
+                                    <span class="m-data-label">📞 เบอร์โทร:</span>
+                                    <span class="m-data-value"><a href="tel:${item.phone}" class="m-tel-link">${escapeHtml(item.phone)}</a></span>
+                                </div>
+                            ` : ''}
+                            ${item.address ? `
+                                <div class="m-data-row" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                                    <span class="m-data-label">📍 ที่อยู่จัดส่ง:</span>
+                                    <span class="m-data-value" style="text-align: left;">${escapeHtml(item.address)}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+
+                    <!-- Media Section & Quick Share -->
                     ${mobileThumbs ? `
-                        <div class="mobile-thumbs-box" ontouchstart="quickPreloadRow(${item.row})">
-                            <div class="mobile-thumbs-header">
-                                <span style="font-size: 0.82rem; color: #475569; font-weight: 600;">📷 รูปภาพและสลิปแนบ:</span>
+                        <div class="m-media-box" ontouchstart="quickPreloadRow(${item.row})">
+                            <div class="m-media-header">
+                                <span class="m-media-title">📷 รูปภาพและสลิปแนบ (${(img1 && img2) ? '2 รูป' : '1 รูป'}):</span>
                                 <button type="button" class="btn-mobile-share-all" onclick="shareDonationByRow(${item.row})">
                                     📤 แชร์รูปภาพ${(img1 && img2) ? ' (แชร์พร้อมกัน 2 รูป)' : ''}
                                 </button>
                             </div>
-                            <div class="mobile-card-thumbs" style="display:flex; gap:10px; flex-wrap:wrap;">${mobileThumbs}</div>
+                            <div class="m-media-thumbs">${mobileThumbs}</div>
                         </div>
                     ` : ''}
-                    <div class="mobile-card-actions">
-                        ${item.is_approved ? `<button type="button" class="badge-status-on" onclick="toggleVisibility(${item.row})">👁️ แสดงบนเว็บ</button>` : `<button type="button" class="badge-status-off" onclick="toggleVisibility(${item.row})">🔒 ซ่อนบนเว็บ</button>`}
-                        <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row})">🗑️ ลบ</button>
+
+                    <!-- Footer Actions -->
+                    <div class="m-card-footer">
+                        <button type="button" class="btn-delete-row" onclick="deleteDonation(${item.row}, '${escapeHtml(item.donor_name || 'ผู้บริจาค')}')">
+                            🗑️ ลบข้อมูล
+                        </button>
                     </div>
                 </div>
             `;
         }).join('');
+
+        const countLabel = document.getElementById('filteredCountLabel');
+        if (countLabel) {
+            countLabel.textContent = `(แสดง ${filtered.length} รายการ)`;
+        }
+        applyViewModeUI();
     }
 
     async function toggleVisibility(rowIdx) {
@@ -1462,10 +1751,22 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
         }
     }
 
-    async function deleteDonation(rowIdx) {
-        if (!confirm('ยืนยันการลบข้อมูลรายการนี้?')) return;
+    async function deleteDonation(rowIdx, donorName = 'ผู้บริจาค') {
+        const result = await Swal.fire({
+            title: 'ยืนยันการลบข้อมูล?',
+            html: `ต้องการลบข้อมูลของ <strong>"${escapeHtml(donorName)}"</strong> ใช่หรือไม่?<br><small style="color: #dc2626;">การลบนี้จะไม่สามารถย้อนกลับได้</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ต้องการลบ',
+            cancelButtonText: 'ยกเลิก'
+        });
+        if (!result.isConfirmed) return;
+
         allDonations = allDonations.filter(d => d.row !== rowIdx);
         renderDonationsUI();
+        updateStatsUI({ totalDonations: allDonations.length });
         const scriptUrl = getScriptUrl();
         if (scriptUrl) {
             try {
@@ -1846,6 +2147,61 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
                 }, idx * 300);
             });
         }
+    }
+
+    // View Mode Management (Table vs Card)
+    let currentViewMode = localStorage.getItem('csh_admin_view_mode') || (window.innerWidth <= 992 ? 'card' : 'table');
+
+    function switchViewMode(mode) {
+        currentViewMode = mode;
+        localStorage.setItem('csh_admin_view_mode', mode);
+        applyViewModeUI();
+    }
+
+    function applyViewModeUI() {
+        const tableView = document.querySelector('.desktop-table-view');
+        const cardsView = document.getElementById('mobileCardsContainer');
+        const btnTable = document.getElementById('btnViewTable');
+        const btnCard = document.getElementById('btnViewCard');
+
+        if (!tableView || !cardsView) return;
+
+        if (currentViewMode === 'table') {
+            tableView.style.setProperty('display', 'block', 'important');
+            cardsView.style.setProperty('display', 'none', 'important');
+            btnTable?.classList.add('active');
+            btnCard?.classList.remove('active');
+        } else {
+            tableView.style.setProperty('display', 'none', 'important');
+            cardsView.style.setProperty('display', 'flex', 'important');
+            btnCard?.classList.add('active');
+            btnTable?.classList.remove('active');
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        if (!localStorage.getItem('csh_admin_view_mode')) {
+            const detected = window.innerWidth <= 992 ? 'card' : 'table';
+            if (detected !== currentViewMode) {
+                currentViewMode = detected;
+                applyViewModeUI();
+            }
+        }
+    });
+
+    function formatShortDate(dateVal) {
+        if (!dateVal) return '—';
+        const str = String(dateVal).trim();
+        if (str.includes('/')) return str;
+        try {
+            const d = new Date(str);
+            if (!isNaN(d.getTime())) {
+                const day = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const time = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+                return `${day} ${time}`;
+            }
+        } catch(e) {}
+        return str;
     }
 
     function formatImageUrl(url) {
