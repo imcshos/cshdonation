@@ -93,6 +93,12 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             padding: 0;
         }
 
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Sarabun', sans-serif;
             background: var(--admin-bg);
@@ -237,6 +243,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             margin: 0 auto;
             padding: 24px 24px 60px;
             width: 100%;
+            max-width: 100%;
             box-sizing: border-box;
         }
 
@@ -247,6 +254,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2ece7;
             width: 100%;
+            max-width: 100%;
             box-sizing: border-box;
         }
 
@@ -399,6 +407,10 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             gap: 14px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .search-form-wrap {
@@ -406,6 +418,8 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             gap: 8px;
             flex-grow: 1;
             max-width: 460px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .search-input-box {
@@ -465,6 +479,9 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             gap: 6px;
             flex-wrap: wrap;
             align-items: center;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .filter-pill {
@@ -1072,6 +1089,139 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
            RESPONSIVE BREAKPOINTS (COMPUTER & MOBILE FIT)
            ========================================================================== */
         @media (max-width: 992px) {
+            html, body {
+                width: 100vw !important;
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+
+            .admin-wrapper {
+                width: 100% !important;
+                max-width: 100vw !important;
+                padding: 12px 10px 48px !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+
+            .donation-main-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 14px 12px !important;
+                border-radius: 16px !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+            }
+
+            .donation-header-box {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px !important;
+                margin-bottom: 16px !important;
+                padding-bottom: 14px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .header-title-group {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+
+            .header-title-group h2 {
+                font-size: 1.15rem !important;
+                line-height: 1.35 !important;
+                word-break: break-word !important;
+            }
+
+            .header-title-group small {
+                font-size: 0.78rem !important;
+                line-height: 1.4 !important;
+                word-break: break-word !important;
+                display: block !important;
+            }
+
+            .header-actions-group {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .header-actions-group .btn-header {
+                width: 100% !important;
+                justify-content: center !important;
+                text-align: center !important;
+                font-size: 0.84rem !important;
+                padding: 9px 8px !important;
+                box-sizing: border-box !important;
+            }
+
+            .header-actions-group .btn-logout {
+                grid-column: span 2 !important;
+            }
+
+            .filter-controls-box {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .search-form-wrap {
+                max-width: 100% !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .search-input-box input {
+                font-size: 0.88rem !important;
+                padding: 9px 34px 9px 12px !important;
+            }
+
+            .btn-search-action {
+                padding: 9px 16px !important;
+                font-size: 0.88rem !important;
+            }
+
+            .quick-filter-pills {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                padding: 4px 2px 8px !important;
+                flex-wrap: nowrap !important;
+                box-sizing: border-box !important;
+            }
+
+            .quick-filter-pills::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            .quick-filter-pills .filter-pill {
+                white-space: nowrap !important;
+                padding: 6px 12px !important;
+                font-size: 0.78rem !important;
+                flex-shrink: 0 !important;
+            }
+
+            .view-mode-bar {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
             .mobile-table-hint {
                 display: flex !important;
                 align-items: center;
@@ -1080,12 +1230,19 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             }
 
             .desktop-table-view {
+                display: none;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
                 border-radius: 12px;
                 box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             }
 
             table.admin-donation-table {
-                min-width: 1040px;
+                min-width: 980px;
             }
 
             table.admin-donation-table th,
@@ -1108,92 +1265,6 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
                 background: #f4faf6;
                 z-index: 4;
             }
-
-            .admin-wrapper {
-                padding: 14px 12px 48px !important;
-            }
-
-            .donation-main-card {
-                padding: 16px 14px !important;
-                border-radius: 16px !important;
-            }
-
-            .donation-header-box {
-                flex-direction: column;
-                align-items: stretch !important;
-                gap: 12px !important;
-                margin-bottom: 16px !important;
-                padding-bottom: 14px !important;
-            }
-
-            .header-title-group h2 {
-                font-size: 1.25rem !important;
-            }
-
-            .header-title-group small {
-                font-size: 0.82rem !important;
-            }
-
-            .header-actions-group {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 8px !important;
-                width: 100% !important;
-            }
-
-            .header-actions-group .btn-header {
-                width: 100% !important;
-                justify-content: center !important;
-                text-align: center !important;
-                font-size: 0.84rem !important;
-                padding: 9px 8px !important;
-                box-sizing: border-box !important;
-            }
-
-            .header-actions-group .btn-logout {
-                grid-column: span 2 !important;
-            }
-
-            .filter-controls-box {
-                flex-direction: column;
-                align-items: stretch !important;
-                gap: 10px !important;
-                margin-bottom: 16px !important;
-            }
-
-            .search-form-wrap {
-                max-width: 100% !important;
-                width: 100% !important;
-            }
-
-            .search-input-box input {
-                font-size: 0.88rem !important;
-                padding: 9px 34px 9px 12px !important;
-            }
-
-            .btn-search-action {
-                padding: 9px 16px !important;
-                font-size: 0.88rem !important;
-            }
-
-            .quick-filter-pills {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                padding: 2px 2px 6px !important;
-                flex-wrap: nowrap !important;
-            }
-
-            .quick-filter-pills::-webkit-scrollbar {
-                display: none;
-            }
-
-            .quick-filter-pills .filter-pill {
-                white-space: nowrap !important;
-                padding: 6px 12px !important;
-                font-size: 0.78rem !important;
-                flex-shrink: 0 !important;
-            }
         }
 
         @media (max-width: 640px) {
@@ -1202,47 +1273,56 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
             }
 
             .donation-main-card {
-                padding: 12px 10px !important;
+                padding: 12px 8px !important;
                 border-radius: 14px !important;
             }
 
             /* Compact 3 Stats Cards in 1 Row on Mobile Phones */
             .donation-stat-grid {
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 6px !important;
+                gap: 5px !important;
                 margin-bottom: 12px !important;
+                width: 100% !important;
+                min-width: 0 !important;
             }
 
             .donation-stat-card {
-                padding: 8px 6px !important;
+                padding: 8px 4px !important;
                 flex-direction: column !important;
                 text-align: center !important;
                 gap: 4px !important;
                 border-radius: 10px !important;
+                min-width: 0 !important;
             }
 
             .donation-stat-icon {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 16px !important;
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 14px !important;
                 border-radius: 8px !important;
                 margin: 0 auto !important;
             }
 
             .stat-label {
-                font-size: 0.68rem !important;
+                font-size: 0.65rem !important;
                 line-height: 1.2 !important;
                 height: 2.4em !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                word-break: break-word !important;
             }
 
             .stat-value {
-                font-size: 1.15rem !important;
+                font-size: 1.1rem !important;
                 margin-top: 0 !important;
                 line-height: 1.1 !important;
             }
+
+            .m-donor-name {
+                font-size: 0.95rem !important;
+            }
+        }
 
             /* Mobile Login Overlay */
             #loginOverlay {
@@ -2219,6 +2299,7 @@ $isLoggedIn = !empty($_SESSION['csh_admin_logged']);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        applyViewModeUI();
         loadAdminDonations();
     });
 </script>
